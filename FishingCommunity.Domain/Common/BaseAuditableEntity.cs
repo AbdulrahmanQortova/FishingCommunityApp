@@ -1,10 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace FishingCommunity.Domain.Common;
 
-namespace FishingCommunity.Domain.Common
+public abstract class BaseAuditableEntity : BaseEntity, ISoftDelete
 {
-    internal class BaseAuditableEntity
-    {
-    }
+    public Guid? CreatedBy { get; set; }
+    public DateTime CreatedDate { get; set; }
+
+    public Guid? UpdatedBy { get; set; }
+    public DateTime? UpdatedDate { get; set; }
+
+    public bool IsDeleted { get; set; }
+    public DateTime? DeletedDate { get; set; }
+    public Guid? DeletedBy { get; set; }
+}
+
+public abstract class BaseAuditableEntity<TId> : BaseEntity<TId>, ISoftDelete
+{
+    public Guid? CreatedBy { get; set; }
+    public DateTime CreatedDate { get; set; }
+
+    public Guid? UpdatedBy { get; set; }
+    public DateTime? UpdatedDate { get; set; }
+
+    public bool IsDeleted { get; set; }
+    public DateTime? DeletedDate { get; set; }
+    public Guid? DeletedBy { get; set; }
 }

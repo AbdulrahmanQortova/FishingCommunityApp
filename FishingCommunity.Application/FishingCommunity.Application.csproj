@@ -8,10 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Common\Behaviors\" />
-    <Folder Include="Common\Interfaces\" />
     <Folder Include="Common\Mappings\" />
-    <Folder Include="Common\Models\" />
-    <Folder Include="Features\Auth\" />
     <Folder Include="Features\Community\" />
     <Folder Include="Features\Map\" />
     <Folder Include="Features\FishingRecords\" />

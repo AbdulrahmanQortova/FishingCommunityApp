@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace FishingCommunity.Domain.Common;
 
-namespace FishingCommunity.Domain.Common
+public interface ISoftDelete
 {
-    internal class ISoftDelete
-    {
-    }
+    bool IsDeleted { get; set; }
+    DateTime? DeletedDate { get; set; }
+    Guid? DeletedBy { get; set; }
 }

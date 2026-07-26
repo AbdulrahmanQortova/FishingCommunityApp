@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace FishingCommunity.Domain.Common;
 
-namespace FishingCommunity.Domain.Common
+public abstract class DomainEvent
 {
-    internal class DomainEvent
-    {
-    }
+    public DateTime OccurredOn { get; protected set; } = DateTime.UtcNow;
 }
