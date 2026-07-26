@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Persistence\Migrations\" />
-    <Folder Include="Services\Email\" />
     <Folder Include="Services\FileStorage\" />
     <Folder Include="Services\Caching\" />
     <Folder Include="Services\BackgroundJobs\" />
