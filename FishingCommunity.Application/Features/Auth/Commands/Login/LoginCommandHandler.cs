@@ -1,7 +1,9 @@
 ﻿using FishingCommunity.Application.Common.Interfaces;
+using FishingCommunity.Application.Common.Models;
 using FishingCommunity.Domain.Interfaces;
 using FishingCommunity.Shared.Wrappers;
 using MediatR;
+using Microsoft.Extensions.Options;
 using RefreshTokenEntity = FishingCommunity.Domain.Entities.Identity.RefreshToken;
 
 namespace FishingCommunity.Application.Features.Auth.Commands.Login;
@@ -12,6 +14,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<LoginRes
     private readonly IJwtTokenService _jwtTokenService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly FeatureFlags _featureFlags;
 
     private const int RefreshTokenValidDays = 7;
     private const int AccessTokenValidMinutes = 15;
@@ -20,12 +23,14 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<LoginRes
         IIdentityService identityService,
         IJwtTokenService jwtTokenService,
         IUnitOfWork unitOfWork,
-        IDateTimeProvider dateTimeProvider)
+        IDateTimeProvider dateTimeProvider,
+        IOptions<FeatureFlags> featureFlags)
     {
         _identityService = identityService;
         _jwtTokenService = jwtTokenService;
         _unitOfWork = unitOfWork;
         _dateTimeProvider = dateTimeProvider;
+        _featureFlags = featureFlags.Value;
     }
 
     public async Task<Result<LoginResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
@@ -45,7 +50,10 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<LoginRes
             return Result<LoginResponse>.Failure("User profile could not be retrieved.");
         }
 
-        if (!profile.IsEmailVerified)
+        // Email verification check is now controlled by a feature flag —
+        // disable it in appsettings.json (FeatureFlags:RequireEmailVerification) during
+        // development or if SMTP isn't configured yet.
+        if (_featureFlags.RequireEmailVerification && !profile.IsEmailVerified)
         {
             return Result<LoginResponse>.Failure("Please verify your email before logging in.");
         }

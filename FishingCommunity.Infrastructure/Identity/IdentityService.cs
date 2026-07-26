@@ -133,7 +133,7 @@ public class IdentityService : IIdentityService
         return (true, user.Id, roles);
     }
 
-    public async Task<Result> ConfirmEmailAsync(Guid userId, string code, CancellationToken cancellationToken = default)
+    public async Task<Result> ConfirmEmailAsync(Guid userId, string code, CancellationToken cancellationToken = default, bool bypassCodeCheck = false)
     {
         var user = await _userManager.FindByIdAsync(userId.ToString());
 
@@ -147,18 +147,21 @@ public class IdentityService : IIdentityService
             return Result.Success("Email is already verified.");
         }
 
-        var tokens = await _unitOfWork.Repository<EmailVerificationToken>()
-            .FindAsync(t => t.UserId == userId && t.Code == code, cancellationToken);
-
-        var token = tokens.FirstOrDefault();
-
-        if (token is null || !token.IsValid())
+        if (!bypassCodeCheck)
         {
-            return Result.Failure("Invalid or expired verification code.");
-        }
+            var tokens = await _unitOfWork.Repository<EmailVerificationToken>()
+                .FindAsync(t => t.UserId == userId && t.Code == code, cancellationToken);
 
-        token.MarkAsUsed();
-        _unitOfWork.Repository<EmailVerificationToken>().Update(token);
+            var token = tokens.FirstOrDefault();
+
+            if (token is null || !token.IsValid())
+            {
+                return Result.Failure("Invalid or expired verification code.");
+            }
+
+            token.MarkAsUsed();
+            _unitOfWork.Repository<EmailVerificationToken>().Update(token);
+        }
 
         user.IsEmailVerified = true;
         user.EmailConfirmed = true;

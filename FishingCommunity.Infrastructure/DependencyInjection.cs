@@ -25,6 +25,7 @@ public static class DependencyInjection
         // --- Options binding ---
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
         services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SectionName));
+        services.Configure<FeatureFlags>(configuration.GetSection(FeatureFlags.SectionName));
 
         // --- Interceptors ---
         services.AddScoped<AuditableEntitySaveChangesInterceptor>();
@@ -34,7 +35,14 @@ public static class DependencyInjection
         {
             options.UseSqlServer(
                 configuration.GetConnectionString("DefaultConnection"),
-                sqlOptions => sqlOptions.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName));
+                sqlOptions =>
+                {
+                    sqlOptions.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
+                    sqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(10),
+                        errorNumbersToAdd: null);
+                });
 
             options.AddInterceptors(sp.GetRequiredService<AuditableEntitySaveChangesInterceptor>());
         });

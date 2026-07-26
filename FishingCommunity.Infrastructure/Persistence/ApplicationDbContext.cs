@@ -1,4 +1,5 @@
-﻿using FishingCommunity.Domain.Entities.Identity;
+﻿using FishingCommunity.Domain.Common;
+using FishingCommunity.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -16,17 +17,18 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<EmailVerificationToken> EmailVerificationTokens => Set<EmailVerificationToken>();
     public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
 
-    // Community, Trips, Shop, etc. DbSets will be added here as we build each module.
-
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
-        // Automatically applies every IEntityTypeConfiguration<T> in this assembly
-        // (Persistence/Configurations/*.cs) — no manual registration needed per entity.
+        // Tell EF Core to completely ignore DomainEvent as an entity type.
+        // It's a pure in-memory/transient concept (raised by BaseEntity.AddDomainEvent
+        // and dispatched via MediatR), never persisted to the database, so it must never
+        // be treated as a navigation property or mapped table.
+        builder.Ignore<DomainEvent>();
+
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-        // Rename default Identity tables from AspNetUsers/AspNetRoles/... to cleaner names.
         ConfigureIdentityTableNames(builder);
     }
 
