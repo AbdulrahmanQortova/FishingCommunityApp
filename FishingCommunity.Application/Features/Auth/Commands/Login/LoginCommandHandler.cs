@@ -1,0 +1,83 @@
+﻿using FishingCommunity.Application.Common.Interfaces;
+using FishingCommunity.Domain.Entities.Identity;
+using FishingCommunity.Domain.Interfaces;
+using FishingCommunity.Shared.Wrappers;
+using MediatR;
+
+namespace FishingCommunity.Application.Features.Auth.Commands.Login;
+
+public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<LoginResponse>>
+{
+    private readonly IIdentityService _identityService;
+    private readonly IJwtTokenService _jwtTokenService;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IDateTimeProvider _dateTimeProvider;
+
+    private const int RefreshTokenValidDays = 7;
+    private const int AccessTokenValidMinutes = 15;
+
+    public LoginCommandHandler(
+        IIdentityService identityService,
+        IJwtTokenService jwtTokenService,
+        IUnitOfWork unitOfWork,
+        IDateTimeProvider dateTimeProvider)
+    {
+        _identityService = identityService;
+        _jwtTokenService = jwtTokenService;
+        _unitOfWork = unitOfWork;
+        _dateTimeProvider = dateTimeProvider;
+    }
+
+    public async Task<Result<LoginResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
+    {
+        var (succeeded, userId, roles) = await _identityService.ValidateCredentialsAsync(
+            request.Email, request.Password, cancellationToken);
+
+        if (!succeeded || userId is null)
+        {
+            return Result<LoginResponse>.Failure("Invalid email or password.");
+        }
+
+        var profile = await _identityService.GetUserProfileAsync(userId.Value, cancellationToken);
+
+        if (profile is null)
+        {
+            return Result<LoginResponse>.Failure("User profile could not be retrieved.");
+        }
+
+        if (!profile.IsEmailVerified)
+        {
+            return Result<LoginResponse>.Failure("Please verify your email before logging in.");
+        }
+
+        // Build a lightweight ApplicationUser reference for token generation.
+        // The actual user is fetched fully inside the JWT service if needed via userId,
+        // but we pass what we already have to avoid an extra round trip.
+        var accessToken = _jwtTokenService.GenerateAccessToken(userId.Value, profile.Email, roles);
+
+        var refreshTokenValue = _jwtTokenService.GenerateRefreshToken();
+
+        var refreshToken = new RefreshToken(
+            userId.Value,
+            refreshTokenValue,
+            _dateTimeProvider.UtcNow.AddDays(RefreshTokenValidDays),
+            request.IpAddress ?? "unknown");
+
+        await _unitOfWork.Repository<RefreshToken>().AddAsync(refreshToken, cancellationToken);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        var response = new LoginResponse
+        {
+            UserId = userId.Value,
+            Email = profile.Email,
+            FirstName = profile.FirstName,
+            LastName = profile.LastName,
+            Roles = roles,
+            AccessToken = accessToken,
+            RefreshToken = refreshTokenValue,
+            AccessTokenExpiresOn = _dateTimeProvider.UtcNow.AddMinutes(AccessTokenValidMinutes)
+        };
+
+        return Result<LoginResponse>.Success(response, "Login successful.");
+    }
+}

@@ -13,4 +13,16 @@ public interface IIdentityService
     Task<Result> ChangePasswordAsync(Guid userId, string currentPassword, string newPassword, CancellationToken cancellationToken = default);
     Task<Result> DeleteUserAsync(Guid userId, CancellationToken cancellationToken = default);
     Task<IList<string>> GetUserRolesAsync(Guid userId, CancellationToken cancellationToken = default);
+
+    // Added for Login flow
+    Task<UserProfileDto?> GetUserProfileAsync(Guid userId, CancellationToken cancellationToken = default);
+}
+
+public class UserProfileDto
+{
+    public Guid UserId { get; set; }
+    public string Email { get; set; } = string.Empty;
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public bool IsEmailVerified { get; set; }
 }
