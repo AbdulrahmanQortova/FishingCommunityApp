@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Entities\Identity\" />
+    <Folder Include="Entities\Community\" />
+    <Folder Include="Entities\FishingRecords\" />
+    <Folder Include="Entities\Map\" />
+    <Folder Include="Entities\Chat\" />
+    <Folder Include="Entities\Notifications\" />
+    <Folder Include="Entities\Shop\" />
+    <Folder Include="Entities\Trips\" />
+    <Folder Include="Enums\" />
+    <Folder Include="Events\" />
+    <Folder Include="Exceptions\" />
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR.Contracts" Version="2.0.1" />
+  </ItemGroup>
+
+</Project>
