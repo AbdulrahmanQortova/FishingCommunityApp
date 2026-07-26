@@ -40,13 +40,17 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<Re
 
         var userId = createResult.Data;
 
-        // Raise domain event manually (ApplicationUser inherits IdentityUser<Guid>, not BaseEntity,
-        // so it has no AddDomainEvent() mechanism — we publish explicitly here instead).
         var domainEvent = new UserRegisteredEvent(userId, request.Email);
         await _publisher.Publish(new DomainEventNotification<UserRegisteredEvent>(domainEvent), cancellationToken);
 
-        var verificationCode = Guid.NewGuid().ToString("N")[..6].ToUpper();
-        await _emailService.SendEmailVerificationAsync(request.Email, request.FirstName, verificationCode, cancellationToken);
+        // Generate and persist the verification code through the identity service
+        // (Infrastructure owns EmailVerificationToken creation/storage), then send it.
+        var codeResult = await _identityService.GenerateNewEmailVerificationCodeAsync(userId, cancellationToken);
+
+        if (codeResult.Succeeded)
+        {
+            await _emailService.SendEmailVerificationAsync(request.Email, request.FirstName, codeResult.Data!, cancellationToken);
+        }
 
         var response = new RegisterResponse
         {
