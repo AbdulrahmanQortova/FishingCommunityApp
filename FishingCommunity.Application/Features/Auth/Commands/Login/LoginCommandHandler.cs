@@ -1,8 +1,8 @@
 ﻿using FishingCommunity.Application.Common.Interfaces;
-using FishingCommunity.Domain.Entities.Identity;
 using FishingCommunity.Domain.Interfaces;
 using FishingCommunity.Shared.Wrappers;
 using MediatR;
+using RefreshTokenEntity = FishingCommunity.Domain.Entities.Identity.RefreshToken;
 
 namespace FishingCommunity.Application.Features.Auth.Commands.Login;
 
@@ -50,20 +50,16 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<LoginRes
             return Result<LoginResponse>.Failure("Please verify your email before logging in.");
         }
 
-        // Build a lightweight ApplicationUser reference for token generation.
-        // The actual user is fetched fully inside the JWT service if needed via userId,
-        // but we pass what we already have to avoid an extra round trip.
         var accessToken = _jwtTokenService.GenerateAccessToken(userId.Value, profile.Email, roles);
-
         var refreshTokenValue = _jwtTokenService.GenerateRefreshToken();
 
-        var refreshToken = new RefreshToken(
+        var refreshToken = new RefreshTokenEntity(
             userId.Value,
             refreshTokenValue,
             _dateTimeProvider.UtcNow.AddDays(RefreshTokenValidDays),
             request.IpAddress ?? "unknown");
 
-        await _unitOfWork.Repository<RefreshToken>().AddAsync(refreshToken, cancellationToken);
+        await _unitOfWork.Repository<RefreshTokenEntity>().AddAsync(refreshToken, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         var response = new LoginResponse
