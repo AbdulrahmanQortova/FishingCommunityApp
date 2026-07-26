@@ -15,17 +15,16 @@ public interface IIdentityService
     Task<IList<string>> GetUserRolesAsync(Guid userId, CancellationToken cancellationToken = default);
     Task<UserProfileDto?> GetUserProfileAsync(Guid userId, CancellationToken cancellationToken = default);
     Task<UserProfileDto?> GetUserProfileByEmailAsync(string email, CancellationToken cancellationToken = default);
-
-    // Added for ResendEmailVerification flow
     Task<Result<string>> GenerateNewEmailVerificationCodeAsync(Guid userId, CancellationToken cancellationToken = default);
+
     Task<Result> UpdateProfileAsync(
-    Guid userId,
-    string firstName,
-    string lastName,
-    string? bio,
-    DateTime? dateOfBirth,
-    string? profilePictureUrl,
-    CancellationToken cancellationToken = default);
+        Guid userId,
+        string firstName,
+        string lastName,
+        string? bio,
+        DateTime? dateOfBirth,
+        string? profilePictureUrl,
+        CancellationToken cancellationToken = default);
 }
 
 public class UserProfileDto
