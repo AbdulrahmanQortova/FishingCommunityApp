@@ -1,6 +1,5 @@
 ﻿using FishingCommunity.Application.Common.Interfaces;
 using FishingCommunity.Application.Common.Models;
-using FishingCommunity.Domain.Events;
 using FishingCommunity.Domain.Events.Identity;
 using FishingCommunity.Shared.Wrappers;
 using MediatR;

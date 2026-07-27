@@ -19,7 +19,6 @@
     <Folder Include="Features\Notifications\" />
     <Folder Include="Features\Weather\" />
     <Folder Include="Features\Shop\" />
-    <Folder Include="Features\Trips\" />
   </ItemGroup>
 
   <ItemGroup>

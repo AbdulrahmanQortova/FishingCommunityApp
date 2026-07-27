@@ -1,6 +1,6 @@
 ﻿using FishingCommunity.Domain.Common;
 
-namespace FishingCommunity.Domain.Events;
+namespace FishingCommunity.Domain.Events.Identity;
 
 public class UserRegisteredEvent : DomainEvent
 {
