@@ -236,8 +236,6 @@ public class IdentityService : IIdentityService
             return Result.Failure("Invalid or expired reset token.");
         }
 
-        // ASP.NET Core Identity requires its own internal reset token for ResetPasswordAsync,
-        // so we remove the current password hash and set a new one directly instead.
         var removePasswordResult = await _userManager.RemovePasswordAsync(user);
         if (!removePasswordResult.Succeeded)
         {
@@ -252,6 +250,19 @@ public class IdentityService : IIdentityService
 
         resetToken.MarkAsUsed();
         _unitOfWork.Repository<PasswordResetToken>().Update(resetToken);
+
+        // Security: revoke all active refresh tokens too, same as ChangePasswordAsync —
+        // a password reset should invalidate any existing sessions, in case the account
+        // was compromised and this reset is the legitimate owner regaining control.
+        var activeTokens = await _unitOfWork.Repository<Domain.Entities.Identity.RefreshToken>()
+            .FindAsync(rt => rt.UserId == user.Id && rt.RevokedOn == null && rt.ExpiresOn > DateTime.UtcNow, cancellationToken);
+
+        foreach (var refreshToken in activeTokens)
+        {
+            refreshToken.Revoke("password-reset");
+            _unitOfWork.Repository<Domain.Entities.Identity.RefreshToken>().Update(refreshToken);
+        }
+
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
@@ -276,7 +287,7 @@ public class IdentityService : IIdentityService
         // Security: revoke all active refresh tokens so any other logged-in session
         // is forced to re-authenticate after a password change.
         var activeTokens = await _unitOfWork.Repository<RefreshToken>()
-            .FindAsync(rt => rt.UserId == userId && rt.IsActive, cancellationToken);
+            .FindAsync(rt => rt.UserId == userId && rt.RevokedOn == null && rt.ExpiresOn > DateTime.UtcNow, cancellationToken);
 
         foreach (var refreshToken in activeTokens)
         {

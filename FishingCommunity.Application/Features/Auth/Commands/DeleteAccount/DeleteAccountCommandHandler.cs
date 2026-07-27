@@ -45,7 +45,7 @@ public class DeleteAccountCommandHandler : IRequestHandler<DeleteAccountCommand,
 
         // Revoke all active refresh tokens so no existing session can continue to be used.
         var activeTokens = await _unitOfWork.Repository<RefreshTokenEntity>()
-            .FindAsync(rt => rt.UserId == request.UserId && rt.IsActive, cancellationToken);
+            .FindAsync(rt => rt.UserId == request.UserId && rt.RevokedOn == null && rt.ExpiresOn > DateTime.UtcNow, cancellationToken);
 
         foreach (var token in activeTokens)
         {

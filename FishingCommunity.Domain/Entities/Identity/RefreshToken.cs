@@ -1,4 +1,5 @@
 ﻿using FishingCommunity.Domain.Common;
+using System.Linq.Expressions;
 
 namespace FishingCommunity.Domain.Entities.Identity;
 
