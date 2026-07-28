@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="Common\Behaviors\" />
     <Folder Include="Common\Mappings\" />
-    <Folder Include="Features\Community\" />
     <Folder Include="Features\Map\" />
     <Folder Include="Features\FishingRecords\" />
     <Folder Include="Features\Chat\" />
@@ -19,6 +18,10 @@
     <Folder Include="Features\Notifications\" />
     <Folder Include="Features\Weather\" />
     <Folder Include="Features\Shop\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Features\Community\Posts\Commands\EditPost\EditPostCommand.cs" />
   </ItemGroup>
 
   <ItemGroup>
