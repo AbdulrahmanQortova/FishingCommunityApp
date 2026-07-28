@@ -7,4 +7,4 @@ public class ToggleSavePostCommand : IRequest<Result<bool>> // returns true if n
 {
     public Guid PostId { get; set; }
     public Guid UserId { get; set; }
-}v
+}
