@@ -2,6 +2,7 @@
 using FishingCommunity.Application.Common.Interfaces;
 using FishingCommunity.Application.Features.Trips.Bookings.Commands.ApproveBooking;
 using FishingCommunity.Application.Features.Trips.Bookings.Commands.CancelBooking;
+using FishingCommunity.Application.Features.Trips.Bookings.Commands.CheckInBooking;
 using FishingCommunity.Application.Features.Trips.Bookings.Commands.RejectBooking;
 using FishingCommunity.Application.Features.Trips.Bookings.Commands.RequestBooking;
 using FishingCommunity.Application.Features.Trips.Bookings.Queries.GetMyBookings;
@@ -96,5 +97,19 @@ public class BookingsController : ControllerBase
 
         var result = await _sender.Send(query, cancellationToken);
         return Ok(result);
+    }
+    [HttpPost("{bookingId:guid}/check-in")]
+    [Authorize(Roles = Roles.BoatOwner)]
+    public async Task<IActionResult> CheckIn(Guid tripId, Guid bookingId, CancellationToken cancellationToken)
+    {
+        var command = new CheckInBookingCommand
+        {
+            TripId = tripId,
+            BookingId = bookingId,
+            RequestingUserId = _currentUserService.UserId!.Value
+        };
+
+        var result = await _sender.Send(command, cancellationToken);
+        return result.Succeeded ? Ok(result) : BadRequest(result);
     }
 }

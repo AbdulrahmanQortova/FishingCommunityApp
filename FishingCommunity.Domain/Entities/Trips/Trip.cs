@@ -273,7 +273,11 @@ public class Trip : BaseAuditableEntity, IAggregateRoot
 
         return booking;
     }
-
+    public void CheckInBooking(Guid bookingId)
+    {
+        var booking = GetBookingOrThrow(bookingId);
+        booking.CheckIn();
+    }
     private void EnsureNotStartedOrCompleted()
     {
         if (Status is TripStatus.InProgress or TripStatus.Completed or TripStatus.Cancelled)

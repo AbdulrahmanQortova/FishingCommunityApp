@@ -1,7 +1,9 @@
 ﻿using Asp.Versioning;
 using FishingCommunity.Application.Common.Interfaces;
 using FishingCommunity.Application.Features.Trips.Commands.CancelTrip;
+using FishingCommunity.Application.Features.Trips.Commands.CompleteTrip;
 using FishingCommunity.Application.Features.Trips.Commands.CreateTrip;
+using FishingCommunity.Application.Features.Trips.Commands.StartTrip;
 using FishingCommunity.Application.Features.Trips.Commands.UpdateTrip;
 using FishingCommunity.Application.Features.Trips.Queries.GetTripDetails;
 using FishingCommunity.Application.Features.Trips.Queries.GetUpcomingTrips;
@@ -112,6 +114,34 @@ public class TripsController : ControllerBase
             UserId = _currentUserService.UserId!.Value,
             Rating = request.Rating,
             Comment = request.Comment
+        };
+
+        var result = await _sender.Send(command, cancellationToken);
+        return result.Succeeded ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpPost("{tripId:guid}/start")]
+    [Authorize(Roles = Roles.BoatOwner)]
+    public async Task<IActionResult> Start(Guid tripId, CancellationToken cancellationToken)
+    {
+        var command = new StartTripCommand
+        {
+            TripId = tripId,
+            RequestingUserId = _currentUserService.UserId!.Value
+        };
+
+        var result = await _sender.Send(command, cancellationToken);
+        return result.Succeeded ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpPost("{tripId:guid}/complete")]
+    [Authorize(Roles = Roles.BoatOwner)]
+    public async Task<IActionResult> Complete(Guid tripId, CancellationToken cancellationToken)
+    {
+        var command = new CompleteTripCommand
+        {
+            TripId = tripId,
+            RequestingUserId = _currentUserService.UserId!.Value
         };
 
         var result = await _sender.Send(command, cancellationToken);
