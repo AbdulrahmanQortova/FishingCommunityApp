@@ -39,7 +39,9 @@ public class ApplicationUserConfiguration : IEntityTypeConfiguration<Application
             .HasForeignKey(rt => rt.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasIndex(u => u.Email).IsUnique();
+        builder.HasIndex(u => u.Email)
+     .IsUnique()
+     .HasFilter("[IsDeleted] = 0");
         builder.HasIndex(u => u.Status);
     }
 }

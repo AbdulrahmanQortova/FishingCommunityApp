@@ -1,5 +1,6 @@
 ﻿using FishingCommunity.Domain.Common;
 using FishingCommunity.Domain.Entities.Identity;
+using FishingCommunity.Domain.Entities.Trips;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -17,14 +18,17 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<EmailVerificationToken> EmailVerificationTokens => Set<EmailVerificationToken>();
     public DbSet<PasswordResetToken> PasswordResetTokens => Set<PasswordResetToken>();
 
+    // Trip module
+    public DbSet<Boat> Boats => Set<Boat>();
+    public DbSet<Trip> Trips => Set<Trip>();
+    public DbSet<TripBooking> TripBookings => Set<TripBooking>();
+    public DbSet<TripWaitingListEntry> TripWaitingListEntries => Set<TripWaitingListEntry>();
+    public DbSet<TripReview> TripReviews => Set<TripReview>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
-        // Tell EF Core to completely ignore DomainEvent as an entity type.
-        // It's a pure in-memory/transient concept (raised by BaseEntity.AddDomainEvent
-        // and dispatched via MediatR), never persisted to the database, so it must never
-        // be treated as a navigation property or mapped table.
         builder.Ignore<DomainEvent>();
 
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
