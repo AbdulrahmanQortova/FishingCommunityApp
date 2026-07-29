@@ -126,7 +126,7 @@ public static class DependencyInjection
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-
+        services.AddScoped<INotificationService, NotificationService>();
         return services;
     }
 }

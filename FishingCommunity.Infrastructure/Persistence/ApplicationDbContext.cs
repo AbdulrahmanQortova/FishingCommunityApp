@@ -1,6 +1,7 @@
 ﻿using FishingCommunity.Domain.Common;
 using FishingCommunity.Domain.Entities.Community;
 using FishingCommunity.Domain.Entities.Identity;
+using FishingCommunity.Domain.Entities.Notifications;
 using FishingCommunity.Domain.Entities.Trips;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -34,6 +35,9 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<SavedPost> SavedPosts => Set<SavedPost>();
     public DbSet<Follow> Follows => Set<Follow>();
 
+
+    // Notification module
+    public DbSet<Notification> Notifications => Set<Notification>();
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
