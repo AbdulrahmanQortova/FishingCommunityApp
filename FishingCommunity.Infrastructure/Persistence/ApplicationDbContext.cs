@@ -2,6 +2,7 @@
 using FishingCommunity.Domain.Entities.Community;
 using FishingCommunity.Domain.Entities.Identity;
 using FishingCommunity.Domain.Entities.Notifications;
+using FishingCommunity.Domain.Entities.Shop;
 using FishingCommunity.Domain.Entities.Trips;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -38,6 +39,21 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
 
     // Notification module
     public DbSet<Notification> Notifications => Set<Notification>();
+
+
+
+    // Shop module
+    public DbSet<Store> Stores => Set<Store>();
+    public DbSet<Category> Categories => Set<Category>();
+    public DbSet<Product> Products => Set<Product>();
+    public DbSet<ProductReview> ProductReviews => Set<ProductReview>();
+    public DbSet<Cart> Carts => Set<Cart>();
+    public DbSet<CartItem> CartItems => Set<CartItem>();
+    public DbSet<ShippingAddress> ShippingAddresses => Set<ShippingAddress>();
+    public DbSet<Coupon> Coupons => Set<Coupon>();
+    public DbSet<Order> Orders => Set<Order>();
+    public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+    public DbSet<WishlistItem> WishlistItems => Set<WishlistItem>();
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
