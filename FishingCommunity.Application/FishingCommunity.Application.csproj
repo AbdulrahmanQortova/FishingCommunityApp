@@ -15,7 +15,6 @@
     <Folder Include="Features\AIAssistant\" />
     <Folder Include="Features\Admin\" />
     <Folder Include="Features\Payments\" />
-    <Folder Include="Features\Notifications\" />
     <Folder Include="Features\Weather\" />
     <Folder Include="Features\Shop\" />
   </ItemGroup>

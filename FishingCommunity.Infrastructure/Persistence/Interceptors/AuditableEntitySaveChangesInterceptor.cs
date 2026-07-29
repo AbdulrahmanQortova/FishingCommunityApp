@@ -1,5 +1,7 @@
 ﻿using FishingCommunity.Application.Common.Interfaces;
+using FishingCommunity.Application.Common.Models;
 using FishingCommunity.Domain.Common;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -10,13 +12,16 @@ public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
 {
     private readonly ICurrentUserService _currentUserService;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IPublisher _publisher;
 
     public AuditableEntitySaveChangesInterceptor(
         ICurrentUserService currentUserService,
-        IDateTimeProvider dateTimeProvider)
+        IDateTimeProvider dateTimeProvider,
+        IPublisher publisher)
     {
         _currentUserService = currentUserService;
         _dateTimeProvider = dateTimeProvider;
+        _publisher = publisher;
     }
 
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
@@ -34,6 +39,44 @@ public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
         return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
+    public override async ValueTask<int> SavedChangesAsync(
+        SaveChangesCompletedEventData eventData,
+        int result,
+        CancellationToken cancellationToken = default)
+    {
+        // Dispatch domain events only AFTER the changes are successfully persisted —
+        // this guarantees a handler reacting to e.g. TripCreatedEvent can safely assume
+        // the Trip row actually exists in the database by the time it runs.
+        if (eventData.Context is not null)
+        {
+            await DispatchDomainEventsAsync(eventData.Context, cancellationToken);
+        }
+
+        return await base.SavedChangesAsync(eventData, result, cancellationToken);
+    }
+
+    private async Task DispatchDomainEventsAsync(DbContext context, CancellationToken cancellationToken)
+    {
+        var entitiesWithEvents = context.ChangeTracker.Entries<BaseEntity>()
+            .Select(e => e.Entity)
+            .Where(e => e.DomainEvents.Any())
+            .ToList();
+
+        var domainEvents = entitiesWithEvents
+            .SelectMany(e => e.DomainEvents)
+            .ToList();
+
+        entitiesWithEvents.ForEach(e => e.ClearDomainEvents());
+
+        foreach (var domainEvent in domainEvents)
+        {
+            var notificationType = typeof(DomainEventNotification<>).MakeGenericType(domainEvent.GetType());
+            var notification = Activator.CreateInstance(notificationType, domainEvent)!;
+
+            await _publisher.Publish(notification, cancellationToken);
+        }
+    }
+
     private void UpdateAuditableEntities(DbContext? context)
     {
         if (context is null) return;
@@ -41,7 +84,6 @@ public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
         var utcNow = _dateTimeProvider.UtcNow;
         var currentUserId = _currentUserService.UserId;
 
-        // --- Handle BaseAuditableEntity (regular domain entities: Posts, Trips, Orders, etc.) ---
         foreach (var entry in context.ChangeTracker.Entries<BaseAuditableEntity>())
         {
             switch (entry.State)
@@ -57,13 +99,11 @@ public class AuditableEntitySaveChangesInterceptor : SaveChangesInterceptor
                     break;
 
                 case EntityState.Deleted:
-                    // Convert hard delete into soft delete.
                     SoftDeleteEntry(entry, currentUserId, utcNow);
                     break;
             }
         }
 
-        // --- Handle ApplicationUser separately (it inherits IdentityUser<Guid>, not BaseAuditableEntity) ---
         foreach (var entry in context.ChangeTracker.Entries<Domain.Entities.Identity.ApplicationUser>())
         {
             switch (entry.State)
