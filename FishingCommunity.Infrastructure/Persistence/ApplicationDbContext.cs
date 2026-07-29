@@ -1,4 +1,5 @@
 ﻿using FishingCommunity.Domain.Common;
+using FishingCommunity.Domain.Entities.Community;
 using FishingCommunity.Domain.Entities.Identity;
 using FishingCommunity.Domain.Entities.Trips;
 using Microsoft.AspNetCore.Identity;
@@ -24,6 +25,14 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<TripBooking> TripBookings => Set<TripBooking>();
     public DbSet<TripWaitingListEntry> TripWaitingListEntries => Set<TripWaitingListEntry>();
     public DbSet<TripReview> TripReviews => Set<TripReview>();
+
+    // Community module
+    public DbSet<Post> Posts => Set<Post>();
+    public DbSet<Comment> Comments => Set<Comment>();
+    public DbSet<PostReaction> PostReactions => Set<PostReaction>();
+    public DbSet<PostReport> PostReports => Set<PostReport>();
+    public DbSet<SavedPost> SavedPosts => Set<SavedPost>();
+    public DbSet<Follow> Follows => Set<Follow>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
