@@ -16,7 +16,6 @@
     <Folder Include="Features\Admin\" />
     <Folder Include="Features\Payments\" />
     <Folder Include="Features\Weather\" />
-    <Folder Include="Features\Shop\" />
   </ItemGroup>
 
   <ItemGroup>
