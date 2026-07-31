@@ -7,7 +7,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Folder Include="Entities\Map\" />
 		<Folder Include="Entities\Chat\" />
 	</ItemGroup>
 

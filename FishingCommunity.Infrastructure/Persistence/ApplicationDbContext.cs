@@ -2,6 +2,7 @@
 using FishingCommunity.Domain.Entities.Community;
 using FishingCommunity.Domain.Entities.FishingRecords;
 using FishingCommunity.Domain.Entities.Identity;
+using FishingCommunity.Domain.Entities.Map;
 using FishingCommunity.Domain.Entities.Notifications;
 using FishingCommunity.Domain.Entities.Shop;
 using FishingCommunity.Domain.Entities.Trips;
@@ -61,6 +62,15 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     // Fishing Records module
     public DbSet<FishSpecies> FishSpecies => Set<FishSpecies>();
     public DbSet<FishingLog> FishingLogs => Set<FishingLog>();
+
+
+
+    // Map module
+    public DbSet<FishingSpot> FishingSpots => Set<FishingSpot>();
+    public DbSet<FavoriteLocation> FavoriteLocations => Set<FavoriteLocation>();
+
+
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

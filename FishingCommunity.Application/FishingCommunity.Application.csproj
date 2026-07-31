@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="Common\Behaviors\" />
     <Folder Include="Common\Mappings\" />
-    <Folder Include="Features\Map\" />
     <Folder Include="Features\Chat\" />
     <Folder Include="Features\AIAssistant\" />
     <Folder Include="Features\Admin\" />
