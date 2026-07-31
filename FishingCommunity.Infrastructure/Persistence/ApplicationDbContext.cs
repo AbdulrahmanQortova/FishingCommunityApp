@@ -1,5 +1,6 @@
 ﻿using FishingCommunity.Domain.Common;
 using FishingCommunity.Domain.Entities.Community;
+using FishingCommunity.Domain.Entities.FishingRecords;
 using FishingCommunity.Domain.Entities.Identity;
 using FishingCommunity.Domain.Entities.Notifications;
 using FishingCommunity.Domain.Entities.Shop;
@@ -54,6 +55,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderItem> OrderItems => Set<OrderItem>();
     public DbSet<WishlistItem> WishlistItems => Set<WishlistItem>();
+
+
+
+    // Fishing Records module
+    public DbSet<FishSpecies> FishSpecies => Set<FishSpecies>();
+    public DbSet<FishingLog> FishingLogs => Set<FishingLog>();
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
