@@ -1,5 +1,4 @@
-﻿using System.Text;
-using FishingCommunity.Application.Common.Interfaces;
+﻿using FishingCommunity.Application.Common.Interfaces;
 using FishingCommunity.Application.Common.Models;
 using FishingCommunity.Domain.Entities.Identity;
 using FishingCommunity.Domain.Interfaces;
@@ -8,6 +7,7 @@ using FishingCommunity.Infrastructure.Persistence;
 using FishingCommunity.Infrastructure.Persistence.Interceptors;
 using FishingCommunity.Infrastructure.Services;
 using FishingCommunity.Infrastructure.Services.Email;
+using FishingCommunity.Infrastructure.Services.Weather;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace FishingCommunity.Infrastructure;
 
@@ -26,7 +27,9 @@ public static class DependencyInjection
         services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
         services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SectionName));
         services.Configure<FeatureFlags>(configuration.GetSection(FeatureFlags.SectionName));
+        services.Configure<WeatherSettings>(configuration.GetSection(WeatherSettings.SectionName));
 
+        services.AddHttpClient<IWeatherService, WeatherService>();
         // --- Interceptors ---
         services.AddScoped<AuditableEntitySaveChangesInterceptor>();
 
@@ -47,6 +50,27 @@ public static class DependencyInjection
             options.AddInterceptors(sp.GetRequiredService<AuditableEntitySaveChangesInterceptor>());
         });
 
+        #region Redis
+        // Redis distributed cache — used by IDistributedCache consumers (WeatherService, and
+        // anything else that needs caching going forward).
+        var redisConnectionString = configuration.GetConnectionString("Redis");
+
+        if (!string.IsNullOrWhiteSpace(redisConnectionString))
+        {
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = redisConnectionString;
+                options.InstanceName = "FishingCommunity:";
+            });
+        }
+        else
+        {
+            // Fallback for local development without Redis running — an in-memory cache
+            // implements the same IDistributedCache interface, so WeatherService works
+            // unchanged either way.
+            services.AddDistributedMemoryCache();
+        } 
+        #endregion
         // --- ASP.NET Core Identity ---
         services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
         {

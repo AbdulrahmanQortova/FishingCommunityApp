@@ -12,7 +12,6 @@
     <Folder Include="Services\Caching\" />
     <Folder Include="Services\BackgroundJobs\" />
     <Folder Include="Services\AI\" />
-    <Folder Include="Services\Weather\" />
     <Folder Include="Services\Payments\" />
   </ItemGroup>
 
