@@ -1,4 +1,5 @@
 ﻿using FishingCommunity.Domain.Common;
+using FishingCommunity.Domain.Entities.Chat;
 using FishingCommunity.Domain.Entities.Community;
 using FishingCommunity.Domain.Entities.FishingRecords;
 using FishingCommunity.Domain.Entities.Identity;
@@ -69,6 +70,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<FishingSpot> FishingSpots => Set<FishingSpot>();
     public DbSet<FavoriteLocation> FavoriteLocations => Set<FavoriteLocation>();
 
+
+    // Chat module
+    public DbSet<Conversation> Conversations => Set<Conversation>();
+    public DbSet<Message> Messages => Set<Message>();
 
 
     protected override void OnModelCreating(ModelBuilder builder)

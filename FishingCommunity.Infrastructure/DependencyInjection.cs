@@ -6,6 +6,7 @@ using FishingCommunity.Infrastructure.Identity;
 using FishingCommunity.Infrastructure.Persistence;
 using FishingCommunity.Infrastructure.Persistence.Interceptors;
 using FishingCommunity.Infrastructure.Services;
+using FishingCommunity.Infrastructure.Services.Chat;
 using FishingCommunity.Infrastructure.Services.Email;
 using FishingCommunity.Infrastructure.Services.Weather;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -151,6 +152,8 @@ public static class DependencyInjection
         services.AddScoped<IEmailService, EmailService>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddSingleton<IChatConnectionTracker, ChatConnectionTracker>();
+        services.AddScoped<IChatNotifier, ChatNotifier>();
         return services;
     }
 }

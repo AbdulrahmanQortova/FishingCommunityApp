@@ -26,7 +26,7 @@ builder.Host.UseSerilog((context, configuration) =>
 // Services
 // ============================================================
 builder.Services.AddControllers();
-
+builder.Services.AddSignalR();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -72,7 +72,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
+app.MapHub<FishingCommunity.API.Hubs.ChatHub>("/hubs/chat");
 // ============================================================
 // Database Seeding (Roles + Default Admin)
 // ============================================================
