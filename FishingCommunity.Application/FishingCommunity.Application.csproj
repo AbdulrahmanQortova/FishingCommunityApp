@@ -10,7 +10,6 @@
     <Folder Include="Common\Behaviors\" />
     <Folder Include="Common\Mappings\" />
     <Folder Include="Features\AIAssistant\" />
-    <Folder Include="Features\Payments\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,6 +5,7 @@ using FishingCommunity.Domain.Entities.FishingRecords;
 using FishingCommunity.Domain.Entities.Identity;
 using FishingCommunity.Domain.Entities.Map;
 using FishingCommunity.Domain.Entities.Notifications;
+using FishingCommunity.Domain.Entities.Payments;
 using FishingCommunity.Domain.Entities.Shop;
 using FishingCommunity.Domain.Entities.Trips;
 using Microsoft.AspNetCore.Identity;
@@ -74,6 +75,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     // Chat module
     public DbSet<Conversation> Conversations => Set<Conversation>();
     public DbSet<Message> Messages => Set<Message>();
+
+    // payment module
+    public DbSet<Payment> Payments => Set<Payment>();
+
 
 
     protected override void OnModelCreating(ModelBuilder builder)
