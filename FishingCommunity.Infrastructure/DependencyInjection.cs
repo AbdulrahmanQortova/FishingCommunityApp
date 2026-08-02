@@ -2,6 +2,7 @@
 using FishingCommunity.Application.Common.Models;
 using FishingCommunity.Domain.Entities.Identity;
 using FishingCommunity.Domain.Interfaces;
+using FishingCommunity.Infrastructure.BackgroundJobs;
 using FishingCommunity.Infrastructure.Identity;
 using FishingCommunity.Infrastructure.Persistence;
 using FishingCommunity.Infrastructure.Persistence.Interceptors;
@@ -9,8 +10,9 @@ using FishingCommunity.Infrastructure.Services;
 using FishingCommunity.Infrastructure.Services.Chat;
 using FishingCommunity.Infrastructure.Services.Email;
 using FishingCommunity.Infrastructure.Services.Weather;
+using Hangfire;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -94,6 +96,28 @@ public static class DependencyInjection
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
+
+
+
+        services.AddHangfire(config => config
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(
+        configuration.GetConnectionString("DefaultConnection"),
+        new SqlServerStorageOptions
+        {
+            CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+            SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+            QueuePollInterval = TimeSpan.Zero,
+            UseRecommendedIsolationLevel = true,
+            DisableGlobalLocks = true
+        }));
+
+        services.AddHangfireServer(options =>
+        {
+            options.WorkerCount = Environment.ProcessorCount * 2;
+        });
         // --- JWT Authentication ---
         var jwtSettings = configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()
             ?? throw new InvalidOperationException("JwtSettings section is missing from configuration.");
@@ -154,6 +178,10 @@ public static class DependencyInjection
         services.AddScoped<INotificationService, NotificationService>();
         services.AddSingleton<IChatConnectionTracker, ChatConnectionTracker>();
         services.AddScoped<IChatNotifier, ChatNotifier>();
+        // Job classes themselves — registered as Scoped since they use IUnitOfWork internally.
+        services.AddScoped<TripReminderJob>();
+        services.AddScoped<CleanupExpiredTokensJob>();
+        services.AddScoped<DailyReportJob>();
         return services;
     }
 }

@@ -1,13 +1,14 @@
+using System.Threading.RateLimiting;
 using FishingCommunity.API.Extensions;
 using FishingCommunity.API.Middleware;
 using FishingCommunity.Application;
 using FishingCommunity.Domain.Entities.Identity;
 using FishingCommunity.Infrastructure;
+using FishingCommunity.Infrastructure.BackgroundJobs;
 using FishingCommunity.Infrastructure.Persistence;
+using Hangfire;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Serilog;
-using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,13 +27,15 @@ builder.Host.UseSerilog((context, configuration) =>
 // Services
 // ============================================================
 builder.Services.AddControllers();
-builder.Services.AddSignalR();
+
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddSwaggerDocumentation();
 builder.Services.AddApiVersioningConfiguration();
 builder.Services.AddRateLimitingConfiguration();
+
+builder.Services.AddSignalR();
 
 builder.Services.AddCors(options =>
 {
@@ -71,8 +74,17 @@ app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// ============================================================
+// Hangfire Dashboard (Admin-only)
+// ============================================================
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = new[] { new HangfireDashboardAuthFilter() }
+});
+
 app.MapControllers();
 app.MapHub<FishingCommunity.API.Hubs.ChatHub>("/hubs/chat");
+
 // ============================================================
 // Database Seeding (Roles + Default Admin)
 // ============================================================
@@ -94,5 +106,23 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "An error occurred while seeding the database.");
     }
 }
+
+// ============================================================
+// Hangfire Recurring Jobs Registration
+// ============================================================
+RecurringJob.AddOrUpdate<TripReminderJob>(
+    "trip-reminders",
+    job => job.ExecuteAsync(),
+    Cron.Hourly);
+
+RecurringJob.AddOrUpdate<CleanupExpiredTokensJob>(
+    "cleanup-expired-tokens",
+    job => job.ExecuteAsync(),
+    Cron.Daily(3)); // Runs daily at 3:00 AM UTC — low-traffic window.
+
+RecurringJob.AddOrUpdate<DailyReportJob>(
+    "daily-report",
+    job => job.ExecuteAsync(),
+    Cron.Daily(6)); // Runs daily at 6:00 AM UTC.
 
 app.Run();
