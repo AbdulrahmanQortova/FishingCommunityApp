@@ -66,7 +66,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseStaticFiles(); // Serves files from wwwroot, including wwwroot/uploads
 app.UseCors("DefaultCorsPolicy");
 
 app.UseRateLimiter();

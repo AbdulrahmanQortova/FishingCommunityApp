@@ -7,8 +7,10 @@ using FishingCommunity.Infrastructure.Identity;
 using FishingCommunity.Infrastructure.Persistence;
 using FishingCommunity.Infrastructure.Persistence.Interceptors;
 using FishingCommunity.Infrastructure.Services;
+using FishingCommunity.Infrastructure.Services.AI;
 using FishingCommunity.Infrastructure.Services.Chat;
 using FishingCommunity.Infrastructure.Services.Email;
+using FishingCommunity.Infrastructure.Services.FileStorage;
 using FishingCommunity.Infrastructure.Services.Weather;
 using Hangfire;
 using Hangfire.SqlServer;
@@ -178,6 +180,9 @@ public static class DependencyInjection
         services.AddScoped<INotificationService, NotificationService>();
         services.AddSingleton<IChatConnectionTracker, ChatConnectionTracker>();
         services.AddScoped<IChatNotifier, ChatNotifier>();
+        services.AddScoped<IAiAssistantService, RuleBasedAiAssistantService>();
+        services.Configure<FileStorageSettings>(configuration.GetSection(FileStorageSettings.SectionName));
+        services.AddScoped<IFileStorageService, LocalFileStorageService>();
         // Job classes themselves — registered as Scoped since they use IUnitOfWork internally.
         services.AddScoped<TripReminderJob>();
         services.AddScoped<CleanupExpiredTokensJob>();
