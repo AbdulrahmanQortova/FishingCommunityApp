@@ -11,7 +11,6 @@
     <Folder Include="Common\Mappings\" />
     <Folder Include="Features\Chat\" />
     <Folder Include="Features\AIAssistant\" />
-    <Folder Include="Features\Admin\" />
     <Folder Include="Features\Payments\" />
   </ItemGroup>
 

@@ -1,4 +1,5 @@
 ﻿using FishingCommunity.Application.Common.Interfaces;
+using FishingCommunity.Application.Common.Models;
 using FishingCommunity.Domain.Entities.Identity;
 using FishingCommunity.Domain.Interfaces;
 using FishingCommunity.Shared.Utilities;
@@ -371,6 +372,132 @@ public class IdentityService : IIdentityService
 
         return result.Succeeded
             ? Result.Success()
+            : Result.Failure(result.Errors.Select(e => e.Description));
+    }
+
+    public async Task<(List<AdminUserListItemDto> Users, int TotalCount)> GetUsersAsync(
+    int pageNumber, int pageSize, string? searchTerm, string? role, CancellationToken cancellationToken = default)
+    {
+        var query = _userManager.Users.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(u =>
+                u.Email!.Contains(searchTerm) ||
+                u.FirstName.Contains(searchTerm) ||
+                u.LastName.Contains(searchTerm));
+        }
+
+        if (!string.IsNullOrWhiteSpace(role))
+        {
+            var usersInRole = await _userManager.GetUsersInRoleAsync(role);
+            var userIdsInRole = usersInRole.Select(u => u.Id).ToHashSet();
+            query = query.Where(u => userIdsInRole.Contains(u.Id));
+        }
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var pagedUsers = await query
+            .OrderByDescending(u => u.CreatedDate)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        var result = new List<AdminUserListItemDto>();
+
+        foreach (var user in pagedUsers)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+
+            result.Add(new AdminUserListItemDto
+            {
+                Id = user.Id,
+                Email = user.Email ?? string.Empty,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Roles = roles,
+                Status = user.Status.ToString(),
+                IsEmailVerified = user.IsEmailVerified,
+                CreatedDate = user.CreatedDate
+            });
+        }
+
+        return (result, totalCount);
+    }
+
+    public async Task<Result> SuspendUserAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+
+        if (user is null)
+        {
+            return Result.Failure("User not found.");
+        }
+
+        user.Status = Domain.Enums.AccountStatus.Suspended;
+        user.LockoutEnabled = true;
+        user.LockoutEnd = DateTimeOffset.MaxValue; // Effectively locks the account indefinitely.
+
+        var result = await _userManager.UpdateAsync(user);
+
+        if (!result.Succeeded)
+        {
+            return Result.Failure(result.Errors.Select(e => e.Description));
+        }
+
+        // Revoke all active sessions immediately.
+        var activeTokens = await _unitOfWork.Repository<RefreshToken>()
+            .FindAsync(rt => rt.UserId == userId && rt.RevokedOn == null && rt.ExpiresOn > _dateTimeProvider.UtcNow, cancellationToken);
+
+        foreach (var token in activeTokens)
+        {
+            token.Revoke("admin-suspension");
+            _unitOfWork.Repository<RefreshToken>().Update(token);
+        }
+
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return Result.Success("User suspended successfully.");
+    }
+
+    public async Task<Result> ReactivateUserAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+
+        if (user is null)
+        {
+            return Result.Failure("User not found.");
+        }
+
+        user.Status = Domain.Enums.AccountStatus.Active;
+        user.LockoutEnabled = false;
+        user.LockoutEnd = null;
+
+        var result = await _userManager.UpdateAsync(user);
+
+        return result.Succeeded
+            ? Result.Success("User reactivated successfully.")
+            : Result.Failure(result.Errors.Select(e => e.Description));
+    }
+
+    public async Task<Result> PromoteToAdminAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+
+        if (user is null)
+        {
+            return Result.Failure("User not found.");
+        }
+
+        if (await _userManager.IsInRoleAsync(user, Shared.Constants.Roles.Administrator))
+        {
+            return Result.Success("User is already an administrator.");
+        }
+
+        var result = await _userManager.AddToRoleAsync(user, Shared.Constants.Roles.Administrator);
+
+        return result.Succeeded
+            ? Result.Success("User promoted to administrator successfully.")
             : Result.Failure(result.Errors.Select(e => e.Description));
     }
 

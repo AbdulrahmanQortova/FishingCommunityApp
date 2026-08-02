@@ -1,4 +1,5 @@
-﻿using FishingCommunity.Shared.Wrappers;
+﻿using FishingCommunity.Application.Common.Models;
+using FishingCommunity.Shared.Wrappers;
 
 namespace FishingCommunity.Application.Common.Interfaces;
 
@@ -25,6 +26,13 @@ public interface IIdentityService
         DateTime? dateOfBirth,
         string? profilePictureUrl,
         CancellationToken cancellationToken = default);
+
+    Task<(List<AdminUserListItemDto> Users, int TotalCount)> GetUsersAsync(
+    int pageNumber, int pageSize, string? searchTerm, string? role, CancellationToken cancellationToken = default);
+
+    Task<Result> SuspendUserAsync(Guid userId, CancellationToken cancellationToken = default);
+    Task<Result> ReactivateUserAsync(Guid userId, CancellationToken cancellationToken = default);
+    Task<Result> PromoteToAdminAsync(Guid userId, CancellationToken cancellationToken = default);
 }
 
 public class UserProfileDto
