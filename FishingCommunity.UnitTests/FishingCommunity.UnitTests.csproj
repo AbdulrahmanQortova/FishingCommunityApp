@@ -22,4 +22,9 @@
 	<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.10" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FishingCommunity.Application\FishingCommunity.Application.csproj" />
+    <ProjectReference Include="..\FishingCommunity.Infrastructure\FishingCommunity.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
