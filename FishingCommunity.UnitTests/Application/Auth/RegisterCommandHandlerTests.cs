@@ -4,6 +4,7 @@ using FishingCommunity.Application.Features.Auth.Commands.Register;
 using FishingCommunity.Shared.Wrappers;
 using FluentAssertions;
 using MediatR;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
@@ -18,7 +19,11 @@ public class RegisterCommandHandlerTests
 
     public RegisterCommandHandlerTests()
     {
-        _handler = new RegisterCommandHandler(_identityServiceMock.Object, _emailServiceMock.Object, _publisherMock.Object );
+        _handler = new RegisterCommandHandler(
+            _identityServiceMock.Object,
+            _emailServiceMock.Object,
+            _publisherMock.Object,
+            Options.Create(new FeatureFlags { RequireEmailVerification = true }));
     }
 
     private static RegisterCommand CreateValidCommand() => new()
@@ -136,5 +141,41 @@ public class RegisterCommandHandlerTests
 
         // Assert
         _publisherMock.Verify(p => p.Publish(It.IsAny<object>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_WhenFeatureFlagDisablesEmailVerification_AutoConfirmsEmailWithoutSendingCode()
+    {
+        // Arrange: a handler instance with RequireEmailVerification = false.
+        var handlerWithFlagOff = new RegisterCommandHandler(
+            _identityServiceMock.Object,
+            _emailServiceMock.Object,
+            _publisherMock.Object,
+            Options.Create(new FeatureFlags { RequireEmailVerification = false }));
+
+        var command = CreateValidCommand();
+        var newUserId = Guid.NewGuid();
+
+        _identityServiceMock
+            .Setup(s => s.CreateUserAsync(command.Email, command.Password, command.FirstName, command.LastName, command.Role, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result<Guid>.Success(newUserId));
+
+        _identityServiceMock
+            .Setup(s => s.ConfirmEmailAsync(newUserId, It.IsAny<string>(), It.IsAny<CancellationToken>(), true))
+            .ReturnsAsync(Result.Success());
+
+        // Act
+        var result = await handlerWithFlagOff.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.Succeeded.Should().BeTrue();
+
+        _identityServiceMock.Verify(
+            s => s.ConfirmEmailAsync(newUserId, It.IsAny<string>(), It.IsAny<CancellationToken>(), true),
+            Times.Once);
+
+        _emailServiceMock.Verify(
+            e => e.SendEmailVerificationAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            Times.Never);
     }
 }
