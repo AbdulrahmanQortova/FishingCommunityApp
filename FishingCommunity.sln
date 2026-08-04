@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.6.11806.211 stable
+VisualStudioVersion = 18.6.11806.211
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4ED8EE42-872C-4E48-9997-5BE775C287E6}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Backend", "Backend", "{4ED8EE42-872C-4E48-9997-5BE775C287E6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FishingCommunity.Domain", "FishingCommunity.Domain\FishingCommunity.Domain.csproj", "{6B4D00A3-A4CA-41BB-8965-CFF5C5EEB0FF}"
 EndProject
@@ -22,6 +22,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FishingCommunity.IntegrationTests", "FishingCommunity.IntegrationTests\FishingCommunity.IntegrationTests.csproj", "{7EB54B85-C3FD-480F-B4E5-5B1A52F36D34}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FishingCommunity.ApplicationTests", "FishingCommunity.ApplicationTests\FishingCommunity.ApplicationTests.csproj", "{F7A813E8-7E45-4BED-A9DD-6E9D5A7C5AAF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mobile", "Mobile", "{8DBAFD16-48D3-45B8-8014-7A8AE2E7211D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FishingHub.Mobile", "FishingHub.Mobile\FishingHub.Mobile.csproj", "{17819C22-D946-45CE-9B22-0F98A74575A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +65,11 @@ Global
 		{F7A813E8-7E45-4BED-A9DD-6E9D5A7C5AAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7A813E8-7E45-4BED-A9DD-6E9D5A7C5AAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7A813E8-7E45-4BED-A9DD-6E9D5A7C5AAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17819C22-D946-45CE-9B22-0F98A74575A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17819C22-D946-45CE-9B22-0F98A74575A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17819C22-D946-45CE-9B22-0F98A74575A4}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{17819C22-D946-45CE-9B22-0F98A74575A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17819C22-D946-45CE-9B22-0F98A74575A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +83,7 @@ Global
 		{EF6FE3F5-43A1-4E53-86BC-16EC2DCE1C77} = {456D4BB4-2958-4A10-A31A-D90E2E15FE3A}
 		{7EB54B85-C3FD-480F-B4E5-5B1A52F36D34} = {456D4BB4-2958-4A10-A31A-D90E2E15FE3A}
 		{F7A813E8-7E45-4BED-A9DD-6E9D5A7C5AAF} = {456D4BB4-2958-4A10-A31A-D90E2E15FE3A}
+		{17819C22-D946-45CE-9B22-0F98A74575A4} = {8DBAFD16-48D3-45B8-8014-7A8AE2E7211D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3124353E-FE59-4C38-8C60-573ACD221E2D}
