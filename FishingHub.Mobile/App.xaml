@@ -1,7 +1,7 @@
-﻿<?xml version = "1.0" encoding = "UTF-8" ?>
+﻿<?xml version="1.0" encoding="UTF-8" ?>
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:FishingHub.Mobile"
+             xmlns:converters="clr-namespace:FishingHub.Mobile.Converters"
              x:Class="FishingHub.Mobile.App">
     <Application.Resources>
         <ResourceDictionary>
@@ -9,6 +9,12 @@
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <converters:TranslateConverter x:Key="TranslateConverter" />
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <converters:NextOrGetStartedConverter x:Key="NextOrGetStartedConverter" />
+            <converters:NextButtonTextConverter x:Key="NextButtonTextConverter" />
+            <converters:StringNotEmptyConverter x:Key="StringNotEmptyConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:loc="clr-namespace:FishingHub.Mobile.Localization"
+             xmlns:viewmodels="clr-namespace:FishingHub.Mobile.ViewModels.Onboarding"
+             x:Class="FishingHub.Mobile.Views.Onboarding.LandingPage"
+             x:DataType="viewmodels:LandingPageViewModel"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False">
+
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#0B1E3D" Offset="0.0" />
+                <GradientStop Color="#0F5C8C" Offset="0.55" />
+                <GradientStop Color="#1AA3D6" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <!-- Decorative floating bubbles -->
+        <Ellipse x:Name="Bubble1" Fill="#15FFFFFF" WidthRequest="90" HeightRequest="90"
+                 HorizontalOptions="Start" VerticalOptions="Start" Margin="40,90,0,0" />
+        <Ellipse x:Name="Bubble2" Fill="#12FFFFFF" WidthRequest="60" HeightRequest="60"
+                 HorizontalOptions="End" VerticalOptions="Start" Margin="0,60,30,0" />
+        <Ellipse x:Name="Bubble3" Fill="#10FFFFFF" WidthRequest="50" HeightRequest="50"
+                 HorizontalOptions="Start" VerticalOptions="End" Margin="20,0,0,180" />
+        <Ellipse x:Name="Bubble4" Fill="#12FFFFFF" WidthRequest="70" HeightRequest="70"
+                 HorizontalOptions="End" VerticalOptions="Center" Margin="0,0,10,60" />
+
+        <!-- Main content -->
+        <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="6" Padding="32,0">
+
+            <Grid HorizontalOptions="Center" Margin="0,0,0,24">
+                <Ellipse x:Name="GlowCircle" Fill="#1AFFFFFF" WidthRequest="150" HeightRequest="150"
+                         HorizontalOptions="Center" VerticalOptions="Center" />
+                <Border x:Name="IconCircle" StrokeShape="RoundRectangle 55" BackgroundColor="#2A8FC7"
+                        WidthRequest="110" HeightRequest="110" HorizontalOptions="Center" VerticalOptions="Center"
+                        Stroke="#40FFFFFF" StrokeThickness="1">
+                    <Label Text="🐠" FontSize="52" HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
+            </Grid>
+
+            <Label x:Name="TitleLabel" Text="{loc:Translate Key=AppName}" FontFamily="OpenSansSemibold"
+                   FontSize="36" TextColor="White" HorizontalOptions="Center" Opacity="0" />
+
+            <Label x:Name="TaglineLabel" Text="{loc:Translate Key=AppTagline}" FontFamily="OpenSansSemibold"
+                   FontSize="13" CharacterSpacing="2" TextColor="#8FD8F5" HorizontalOptions="Center"
+                   Opacity="0" Margin="0,2,0,0" />
+
+            <Label x:Name="SubtitleLabel" Text="{loc:Translate Key=AppSubtitle}" FontFamily="OpenSansRegular"
+                   FontSize="14" TextColor="#C9E4F2" HorizontalOptions="Center" HorizontalTextAlignment="Center"
+                   Opacity="0" Margin="8,14,8,0" />
+
+            <Button x:Name="DiveInButton" Text="{loc:Translate Key=DiveIn}" Command="{Binding DiveInCommand}"
+                    FontFamily="OpenSansSemibold" FontSize="17" TextColor="#0B1E3D"
+                    BackgroundColor="#4FD7F0" WidthRequest="220" HeightRequest="54" CornerRadius="27"
+                    Margin="0,32,0,0" Opacity="0" />
+
+            <HorizontalStackLayout x:Name="SignInRow" HorizontalOptions="Center" Spacing="4" Margin="0,18,0,0" Opacity="0">
+                <Label Text="{loc:Translate Key=AlreadyHaveAccount}" TextColor="#C9E4F2" FontSize="13" />
+                <Label Text="{loc:Translate Key=SignIn}" TextColor="White" FontFamily="OpenSansSemibold"
+                       FontSize="13" TextDecorations="Underline">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SignInCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </HorizontalStackLayout>
+
+        </VerticalStackLayout>
+
+        <Label Text="{loc:Translate Key=AppFooter}" FontSize="11" TextColor="#5FA0C0"
+               HorizontalOptions="Center" VerticalOptions="End" Margin="0,0,0,28"
+               HorizontalTextAlignment="Center" />
+
+    </Grid>
+</ContentPage>

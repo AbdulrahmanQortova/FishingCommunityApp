@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:loc="clr-namespace:FishingHub.Mobile.Localization"
+             xmlns:viewmodels="clr-namespace:FishingHub.Mobile.ViewModels.Auth"
+             x:Class="FishingHub.Mobile.Views.Auth.RegisterPage"
+             x:DataType="viewmodels:RegisterViewModel"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False">
+
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="False" />
+    </Shell.BackButtonBehavior>
+
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#0B1E3D" Offset="0.0" />
+                <GradientStop Color="#0F5C8C" Offset="0.55" />
+                <GradientStop Color="#1AA3D6" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <ScrollView>
+            <VerticalStackLayout Padding="24,20,24,32" Spacing="20">
+
+                <!-- Back button -->
+                <Button Text="{loc:Translate Key=ChevronGlyph}" Command="{Binding GoBackCommand}"
+                        BackgroundColor="#14FFFFFF" TextColor="White" FontSize="20"
+                        WidthRequest="42" HeightRequest="42" CornerRadius="21" Padding="0"
+                        HorizontalOptions="Start" />
+
+                <!-- Role badge -->
+                <HorizontalStackLayout Spacing="10">
+                    <Border StrokeShape="RoundRectangle 12" BackgroundColor="#2A8FC7"
+                            WidthRequest="40" HeightRequest="40">
+                        <Label Text="{Binding RoleIconEmoji}" FontSize="18"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Border>
+
+                    <Label Text="{Binding RoleBadgeKey, Converter={StaticResource TranslateConverter}}"
+                           FontFamily="OpenSansSemibold" FontSize="16" TextColor="#4FD7F0"
+                           VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <!-- Header -->
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="{loc:Translate Key=CreateAccount}" FontFamily="OpenSansSemibold"
+                           FontSize="30" TextColor="White" />
+                    <Label Text="{loc:Translate Key=CreateAccountSubtitle}" FontFamily="OpenSansRegular"
+                           FontSize="14" TextColor="#B8CEDD" />
+                </VerticalStackLayout>
+
+                <!-- Error message -->
+                <Label Text="{Binding ErrorMessage}" TextColor="#FF8080" FontSize="13"
+                       IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
+                <!-- Full Name -->
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{loc:Translate Key=FullName}" FontFamily="OpenSansSemibold" FontSize="11"
+                           CharacterSpacing="1" TextColor="#8FAFC9" />
+                    <Border StrokeShape="RoundRectangle 14" BackgroundColor="#1AFFFFFF" Stroke="#2A5F82" StrokeThickness="1">
+                        <Entry Text="{Binding FullName}" Placeholder="{loc:Translate Key=FullNamePlaceholder}"
+                               PlaceholderColor="#6E8FA8" TextColor="White" FontFamily="OpenSansRegular"
+                               BackgroundColor="Transparent" Margin="10,0" HeightRequest="52" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Email -->
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{loc:Translate Key=EmailUppercase}" FontFamily="OpenSansSemibold" FontSize="11"
+                           CharacterSpacing="1" TextColor="#8FAFC9" />
+                    <Border StrokeShape="RoundRectangle 14" BackgroundColor="#1AFFFFFF" Stroke="#2A5F82" StrokeThickness="1">
+                        <Entry Text="{Binding Email}" Placeholder="{loc:Translate Key=EmailPlaceholder}"
+                               Keyboard="Email" PlaceholderColor="#6E8FA8" TextColor="White" FontFamily="OpenSansRegular"
+                               BackgroundColor="Transparent" Margin="10,0" HeightRequest="52" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Phone -->
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{loc:Translate Key=Phone}" FontFamily="OpenSansSemibold" FontSize="11"
+                           CharacterSpacing="1" TextColor="#8FAFC9" />
+                    <Border StrokeShape="RoundRectangle 14" BackgroundColor="#1AFFFFFF" Stroke="#2A5F82" StrokeThickness="1">
+                        <Entry Text="{Binding Phone}" Placeholder="{loc:Translate Key=PhonePlaceholder}"
+                               Keyboard="Telephone" PlaceholderColor="#6E8FA8" TextColor="White" FontFamily="OpenSansRegular"
+                               BackgroundColor="Transparent" Margin="10,0" HeightRequest="52" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Password -->
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{loc:Translate Key=PasswordUppercase}" FontFamily="OpenSansSemibold" FontSize="11"
+                           CharacterSpacing="1" TextColor="#8FAFC9" />
+                    <Border StrokeShape="RoundRectangle 14" BackgroundColor="#1AFFFFFF" Stroke="#2A5F82" StrokeThickness="1">
+                        <Entry Text="{Binding Password}" IsPassword="True"
+                               TextColor="White" FontFamily="OpenSansRegular"
+                               BackgroundColor="Transparent" Margin="10,0" HeightRequest="52" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Confirm Password -->
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{loc:Translate Key=ConfirmPasswordUppercase}" FontFamily="OpenSansSemibold" FontSize="11"
+                           CharacterSpacing="1" TextColor="#8FAFC9" />
+                    <Border StrokeShape="RoundRectangle 14" BackgroundColor="#1AFFFFFF" Stroke="#2A5F82" StrokeThickness="1">
+                        <Entry Text="{Binding ConfirmPassword}" IsPassword="True"
+                               TextColor="White" FontFamily="OpenSansRegular"
+                               BackgroundColor="Transparent" Margin="10,0" HeightRequest="52" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Submit button -->
+                <Button Text="{loc:Translate Key=CreateAccount}" Command="{Binding CreateAccountCommand}"
+                        FontFamily="OpenSansSemibold" FontSize="16" TextColor="#0B1E3D"
+                        BackgroundColor="#4FD7F0" HeightRequest="54" CornerRadius="27" Margin="0,12,0,0"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                                   Color="#4FD7F0" HorizontalOptions="Center" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

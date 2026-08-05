@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:loc="clr-namespace:FishingHub.Mobile.Localization"
+             xmlns:viewmodels="clr-namespace:FishingHub.Mobile.ViewModels.Onboarding"
+             xmlns:models="clr-namespace:FishingHub.Mobile.Models"
+             x:Class="FishingHub.Mobile.Views.Onboarding.OnboardingCarouselPage"
+             x:DataType="viewmodels:OnboardingCarouselViewModel"
+             Shell.BackButtonBehavior="{x:Null}"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False">
+
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#0B1E3D" Offset="0.0" />
+                <GradientStop Color="#0F5C8C" Offset="0.55" />
+                <GradientStop Color="#1AA3D6" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <Grid RowDefinitions="Auto,*,Auto" Padding="24,16,24,28">
+
+            <!-- Top row: page counter + Skip -->
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto">
+                <Label Grid.Column="0" Text="{Binding PageCounterText}"
+                       TextColor="#8FAFC9" FontFamily="OpenSansSemibold" FontSize="14"
+                       VerticalOptions="Center" />
+
+                <Button Grid.Column="1" Text="{loc:Translate Key=Skip}" Command="{Binding SkipCommand}"
+                        BackgroundColor="Transparent" TextColor="#4FD7F0"
+                        FontFamily="OpenSansSemibold" FontSize="14" Padding="0"
+                        IsVisible="{Binding IsLastSlide, Converter={StaticResource InvertedBoolConverter}}" />
+            </Grid>
+
+            <!-- Carousel -->
+            <CarouselView Grid.Row="1" ItemsSource="{Binding Slides}"
+                          Position="{Binding CurrentIndex}"
+                          Loop="False">
+                <CarouselView.ItemTemplate>
+                    <DataTemplate x:DataType="models:OnboardingSlide">
+                        <VerticalStackLayout Spacing="0" VerticalOptions="Center">
+
+                            <!-- Layered badge illustration -->
+                            <Grid HeightRequest="220" HorizontalOptions="Center" Margin="0,0,0,32">
+
+                                <Ellipse Fill="#12FFFFFF" WidthRequest="220" HeightRequest="220"
+                                          HorizontalOptions="Center" VerticalOptions="Center" />
+                                <Ellipse Stroke="#2A5F82" StrokeThickness="1.5" WidthRequest="220" HeightRequest="220"
+                                          Fill="Transparent" HorizontalOptions="Center" VerticalOptions="Center" />
+
+                                <!-- Two small "people" circles -->
+                                <Border StrokeShape="RoundRectangle 26" BackgroundColor="#3A2A4A"
+                                        WidthRequest="52" HeightRequest="52"
+                                        HorizontalOptions="Center" VerticalOptions="Start"
+                                        Margin="-40,50,0,0">
+                                    <Label Text="👤" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+
+                                <Border StrokeShape="RoundRectangle 26" BackgroundColor="#3A2A4A"
+                                        WidthRequest="52" HeightRequest="52"
+                                        HorizontalOptions="Center" VerticalOptions="Start"
+                                        Margin="40,50,0,0">
+                                    <Label Text="👤" FontSize="22" HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+
+                                <!-- Central icon (slide-specific) -->
+                                <Border StrokeShape="RoundRectangle 40" BackgroundColor="#2A8FC7"
+                                        WidthRequest="80" HeightRequest="80"
+                                        HorizontalOptions="Center" VerticalOptions="Center" Margin="0,30,0,0"
+                                        Stroke="#40FFFFFF" StrokeThickness="1">
+                                    <Label Text="{Binding Emoji}" FontSize="34" HorizontalOptions="Center" VerticalOptions="Center" />
+                                </Border>
+
+                            </Grid>
+
+                            <!-- Title + subtitle -->
+                            <VerticalStackLayout Spacing="14" Padding="8,0">
+                                <Label Text="{Binding TitleKey, Converter={StaticResource TranslateConverter}}"
+                                       FontFamily="OpenSansSemibold" FontSize="28" LineBreakMode="WordWrap"
+                                       TextColor="White" HorizontalTextAlignment="Start" />
+
+                                <Label Text="{Binding SubtitleKey, Converter={StaticResource TranslateConverter}}"
+                                       FontFamily="OpenSansRegular" FontSize="15" LineBreakMode="WordWrap"
+                                       TextColor="#B8CEDD" HorizontalTextAlignment="Start" />
+                            </VerticalStackLayout>
+
+                        </VerticalStackLayout>
+                    </DataTemplate>
+                </CarouselView.ItemTemplate>
+            </CarouselView>
+
+            <!-- Bottom row: dot indicator + Next button -->
+            <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="0,20,0,0">
+
+                <IndicatorView Grid.Column="0" ItemsSource="{Binding Slides}" Position="{Binding CurrentIndex}"
+                               IndicatorColor="#2A5F82" SelectedIndicatorColor="#4FD7F0"
+                               IndicatorSize="8" IndicatorsShape="Circle"
+                               HorizontalOptions="Start" VerticalOptions="Center" />
+
+                <Button Grid.Column="1" Text="{Binding IsLastSlide, Converter={StaticResource NextButtonTextConverter}}"
+                        Command="{Binding NextOrGetStartedCommand}"
+                        FontFamily="OpenSansSemibold" FontSize="16" TextColor="#0B1E3D"
+                        BackgroundColor="#4FD7F0" WidthRequest="140" HeightRequest="52" CornerRadius="26" />
+
+            </Grid>
+
+        </Grid>
+    </Grid>
+</ContentPage>

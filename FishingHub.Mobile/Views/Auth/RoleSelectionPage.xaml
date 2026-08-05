@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:loc="clr-namespace:FishingHub.Mobile.Localization"
+             xmlns:viewmodels="clr-namespace:FishingHub.Mobile.ViewModels.Auth"
+             xmlns:models="clr-namespace:FishingHub.Mobile.Models"
+             x:Class="FishingHub.Mobile.Views.Auth.RoleSelectionPage"
+             x:DataType="viewmodels:RoleSelectionViewModel"
+             Shell.NavBarIsVisible="False"
+             Shell.BackButtonBehavior="{x:Null}"
+             Shell.TabBarIsVisible="False">
+
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#0B1E3D" Offset="0.0" />
+                <GradientStop Color="#0F5C8C" Offset="0.55" />
+                <GradientStop Color="#1AA3D6" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <ScrollView>
+            <VerticalStackLayout Padding="24,24,24,16" Spacing="24">
+
+                <!-- Header -->
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{loc:Translate Key=WelcomeToApp}" FontFamily="OpenSansSemibold" FontSize="13"
+                           CharacterSpacing="1.5" TextColor="#4FD7F0" />
+
+                    <Label Text="{loc:Translate Key=ChooseYourRole}" FontFamily="OpenSansSemibold" FontSize="30"
+                           TextColor="White" LineBreakMode="WordWrap" />
+
+                    <Label Text="{loc:Translate Key=ChooseRoleSubtitle}" FontFamily="OpenSansRegular" FontSize="14"
+                           TextColor="#B8CEDD" Margin="0,4,0,0" />
+                </VerticalStackLayout>
+
+                <!-- Role cards -->
+                <CollectionView ItemsSource="{Binding Roles}" SelectionMode="None">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="16" />
+                    </CollectionView.ItemsLayout>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:RoleOption">
+                            <Border StrokeShape="RoundRectangle 18" Stroke="#2A5F82" StrokeThickness="1"
+                                    BackgroundColor="#14FFFFFF" Padding="16">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:RoleSelectionViewModel}}, Path=SelectRoleCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">
+
+                                    <Border Grid.Column="0" StrokeShape="RoundRectangle 16"
+                                            BackgroundColor="{Binding IconBackgroundHex}"
+                                            WidthRequest="56" HeightRequest="56" VerticalOptions="Start">
+                                        <Label Text="{Binding IconEmoji}" FontSize="26"
+                                               HorizontalOptions="Center" VerticalOptions="Center" />
+                                    </Border>
+
+                                    <VerticalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                                        <Label Text="{Binding TitleKey, Converter={StaticResource TranslateConverter}}"
+                                               FontFamily="OpenSansSemibold" FontSize="18" TextColor="White" />
+
+                                        <Label Text="{Binding SubtitleKey, Converter={StaticResource TranslateConverter}}"
+                                               FontFamily="OpenSansRegular" FontSize="13" TextColor="#B8CEDD"
+                                               LineBreakMode="WordWrap" />
+                                    </VerticalStackLayout>
+
+                                    <Label Grid.Column="2" Text="{loc:Translate Key=ChevronGlyph}" FontSize="18" TextColor="#4FD7F0" VerticalOptions="Center" />
+
+
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Label Text="{loc:Translate Key=AppFooter}" FontSize="11" TextColor="#5FA0C0"
+               HorizontalOptions="Center" VerticalOptions="End" Margin="0,0,0,20"
+               HorizontalTextAlignment="Center" />
+
+    </Grid>
+</ContentPage>
