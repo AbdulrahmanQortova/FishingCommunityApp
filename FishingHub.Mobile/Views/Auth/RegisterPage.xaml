@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:loc="clr-namespace:FishingHub.Mobile.Localization"
              xmlns:viewmodels="clr-namespace:FishingHub.Mobile.ViewModels.Auth"
+             xmlns:controls="clr-namespace:FishingHub.Mobile.Controls"
              x:Class="FishingHub.Mobile.Views.Auth.RegisterPage"
              x:DataType="viewmodels:RegisterViewModel"
              Shell.NavBarIsVisible="False"
@@ -60,7 +61,7 @@
                     <Label Text="{loc:Translate Key=FullName}" FontFamily="OpenSansSemibold" FontSize="11"
                            CharacterSpacing="1" TextColor="#8FAFC9" />
                     <Border StrokeShape="RoundRectangle 14" BackgroundColor="#1AFFFFFF" Stroke="#2A5F82" StrokeThickness="1">
-                        <Entry Text="{Binding FullName}" Placeholder="{loc:Translate Key=FullNamePlaceholder}"
+                        <controls:BorderlessEntry Text="{Binding FullName}" Placeholder="{loc:Translate Key=FullNamePlaceholder}"
                                PlaceholderColor="#6E8FA8" TextColor="White" FontFamily="OpenSansRegular"
                                BackgroundColor="Transparent" Margin="10,0" HeightRequest="52" />
                     </Border>
@@ -71,7 +72,7 @@
                     <Label Text="{loc:Translate Key=EmailUppercase}" FontFamily="OpenSansSemibold" FontSize="11"
                            CharacterSpacing="1" TextColor="#8FAFC9" />
                     <Border StrokeShape="RoundRectangle 14" BackgroundColor="#1AFFFFFF" Stroke="#2A5F82" StrokeThickness="1">
-                        <Entry Text="{Binding Email}" Placeholder="{loc:Translate Key=EmailPlaceholder}"
+                        <controls:BorderlessEntry  Text="{Binding Email}" Placeholder="{loc:Translate Key=EmailPlaceholder}"
                                Keyboard="Email" PlaceholderColor="#6E8FA8" TextColor="White" FontFamily="OpenSansRegular"
                                BackgroundColor="Transparent" Margin="10,0" HeightRequest="52" />
                     </Border>
@@ -82,7 +83,7 @@
                     <Label Text="{loc:Translate Key=Phone}" FontFamily="OpenSansSemibold" FontSize="11"
                            CharacterSpacing="1" TextColor="#8FAFC9" />
                     <Border StrokeShape="RoundRectangle 14" BackgroundColor="#1AFFFFFF" Stroke="#2A5F82" StrokeThickness="1">
-                        <Entry Text="{Binding Phone}" Placeholder="{loc:Translate Key=PhonePlaceholder}"
+                        <controls:BorderlessEntry  Text="{Binding Phone}" Placeholder="{loc:Translate Key=PhonePlaceholder}"
                                Keyboard="Telephone" PlaceholderColor="#6E8FA8" TextColor="White" FontFamily="OpenSansRegular"
                                BackgroundColor="Transparent" Margin="10,0" HeightRequest="52" />
                     </Border>
@@ -93,7 +94,7 @@
                     <Label Text="{loc:Translate Key=PasswordUppercase}" FontFamily="OpenSansSemibold" FontSize="11"
                            CharacterSpacing="1" TextColor="#8FAFC9" />
                     <Border StrokeShape="RoundRectangle 14" BackgroundColor="#1AFFFFFF" Stroke="#2A5F82" StrokeThickness="1">
-                        <Entry Text="{Binding Password}" IsPassword="True"
+                        <controls:BorderlessEntry  Text="{Binding Password}" IsPassword="True"
                                TextColor="White" FontFamily="OpenSansRegular"
                                BackgroundColor="Transparent" Margin="10,0" HeightRequest="52" />
                     </Border>
@@ -104,7 +105,7 @@
                     <Label Text="{loc:Translate Key=ConfirmPasswordUppercase}" FontFamily="OpenSansSemibold" FontSize="11"
                            CharacterSpacing="1" TextColor="#8FAFC9" />
                     <Border StrokeShape="RoundRectangle 14" BackgroundColor="#1AFFFFFF" Stroke="#2A5F82" StrokeThickness="1">
-                        <Entry Text="{Binding ConfirmPassword}" IsPassword="True"
+                        <controls:BorderlessEntry  Text="{Binding ConfirmPassword}" IsPassword="True"
                                TextColor="White" FontFamily="OpenSansRegular"
                                BackgroundColor="Transparent" Margin="10,0" HeightRequest="52" />
                     </Border>

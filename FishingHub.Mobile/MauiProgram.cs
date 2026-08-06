@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Maui;
+using FishingHub.Mobile.Handlers;
 using FishingHub.Mobile.Services.Implementations;
 using FishingHub.Mobile.Services.Interfaces;
 using FishingHub.Mobile.ViewModels.Auth;
@@ -41,7 +42,7 @@ public static class MauiProgram
         builder.Services.AddTransient<RoleSelectionPage>();
         builder.Services.AddTransient<RegisterViewModel>();
         builder.Services.AddTransient<RegisterPage>();
-
+        BorderlessEntryHandlerRegistration.Apply();
 
 
         builder.Services.AddSingleton<IAuthApiService>(sp =>
@@ -56,6 +57,7 @@ public static class MauiProgram
 
             return new AuthApiService(httpClient);
         });
+
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
