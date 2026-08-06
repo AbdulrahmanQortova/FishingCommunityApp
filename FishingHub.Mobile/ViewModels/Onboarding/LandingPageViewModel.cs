@@ -17,7 +17,6 @@ public partial class LandingPageViewModel : ObservableObject
     [RelayCommand]
     private async Task SignInAsync()
     {
-        // Login page isn't built yet — placeholder feedback for now.
-        await Shell.Current.DisplayAlertAsync("Coming Soon", "The Login page will be built next.", "OK");
+        await Shell.Current.GoToAsync("login");
     }
 }

@@ -76,5 +76,10 @@
   "EmailRequired": "Email is required.",
   "EmailInvalid": "Please enter a valid email address.",
   "PasswordTooShort": "Password must be at least 8 characters.",
-  "PasswordsDoNotMatch": "Passwords do not match."
+  "PasswordsDoNotMatch": "Passwords do not match.",
+  "WelcomeBack": "Welcome Back",
+  "LoginSubtitle": "Sign in to continue your fishing journey.",
+  "RememberMe": "Remember me",
+  "InvalidCredentials": "Invalid email or password.",
+  "SecureTokenError": "Could not save your session securely. Please try again."
 }

@@ -35,4 +35,24 @@ public class AuthApiService : IAuthApiService
             };
         }
     }
+
+    public async Task<ApiResult<LoginResponse>> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/v1/auth/login", request, cancellationToken);
+
+            var result = await response.Content.ReadFromJsonAsync<ApiResult<LoginResponse>>(cancellationToken: cancellationToken);
+
+            return result ?? new ApiResult<LoginResponse> { Succeeded = false, Errors = new[] { "Unexpected server response." } };
+        }
+        catch (Exception ex)
+        {
+            return new ApiResult<LoginResponse>
+            {
+                Succeeded = false,
+                Errors = new[] { $"Network error: {ex.Message}" }
+            };
+        }
+    }
 }

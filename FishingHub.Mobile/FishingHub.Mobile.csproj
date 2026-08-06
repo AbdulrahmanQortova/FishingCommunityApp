@@ -89,6 +89,9 @@
     <MauiXaml Update="Views\Auth\AuthPlaceholderPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
+    <MauiXaml Update="Views\Auth\LoginPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
     <MauiXaml Update="Views\Auth\RegisterPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>

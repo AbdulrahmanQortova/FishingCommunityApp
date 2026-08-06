@@ -13,5 +13,6 @@ public partial class AppShell : Shell
         Routing.RegisterRoute("role-selection", typeof(RoleSelectionPage));
         Routing.RegisterRoute("auth-placeholder", typeof(AuthPlaceholderPage));
         Routing.RegisterRoute("register", typeof(RegisterPage));
+        Routing.RegisterRoute("login", typeof(LoginPage));
     }
 }

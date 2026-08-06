@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:loc="clr-namespace:FishingHub.Mobile.Localization"
+             xmlns:controls="clr-namespace:FishingHub.Mobile.Controls"
+             xmlns:viewmodels="clr-namespace:FishingHub.Mobile.ViewModels.Auth"
+             x:Class="FishingHub.Mobile.Views.Auth.LoginPage"
+             x:DataType="viewmodels:LoginViewModel"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False">
+
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="False" />
+    </Shell.BackButtonBehavior>
+
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#0B1E3D" Offset="0.0" />
+                <GradientStop Color="#0F5C8C" Offset="0.55" />
+                <GradientStop Color="#1AA3D6" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <ScrollView>
+            <VerticalStackLayout Padding="24,20,24,32" Spacing="20" VerticalOptions="Center">
+
+                <!-- Back button -->
+                <Button Text="{loc:Translate Key=ChevronGlyph}" Command="{Binding GoBackCommand}"
+                        BackgroundColor="#14FFFFFF" TextColor="White" FontSize="20"
+                        WidthRequest="42" HeightRequest="42" CornerRadius="21" Padding="0"
+                        HorizontalOptions="Start" Margin="0,0,0,12" />
+
+                <!-- Icon -->
+                <Border StrokeShape="RoundRectangle 40" BackgroundColor="#2A8FC7"
+                        WidthRequest="80" HeightRequest="80" HorizontalOptions="Center"
+                        Stroke="#40FFFFFF" StrokeThickness="1" Margin="0,0,0,8">
+                    <Label Text="🎣" FontSize="34" HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
+
+                <!-- Header -->
+                <VerticalStackLayout Spacing="6" HorizontalOptions="Center">
+                    <Label Text="{loc:Translate Key=WelcomeBack}" FontFamily="OpenSansSemibold"
+                           FontSize="28" TextColor="White" HorizontalTextAlignment="Center" />
+                    <Label Text="{loc:Translate Key=LoginSubtitle}" FontFamily="OpenSansRegular"
+                           FontSize="14" TextColor="#B8CEDD" HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+
+                <!-- Error message -->
+                <Label Text="{Binding ErrorMessage}" TextColor="#FF8080" FontSize="13"
+                       HorizontalTextAlignment="Center"
+                       IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNotEmptyConverter}}" />
+
+                <!-- Email -->
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{loc:Translate Key=EmailUppercase}" FontFamily="OpenSansSemibold" FontSize="11"
+                           CharacterSpacing="1" TextColor="#8FAFC9" />
+                    <Border StrokeShape="RoundRectangle 14" BackgroundColor="#1AFFFFFF" Stroke="#2A5F82" StrokeThickness="1">
+                        <controls:BorderlessEntry Text="{Binding Email}" Placeholder="{loc:Translate Key=EmailPlaceholder}"
+                               Keyboard="Email" PlaceholderColor="#6E8FA8" TextColor="White" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Password -->
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{loc:Translate Key=PasswordUppercase}" FontFamily="OpenSansSemibold" FontSize="11"
+                           CharacterSpacing="1" TextColor="#8FAFC9" />
+                    <Border StrokeShape="RoundRectangle 14" BackgroundColor="#1AFFFFFF" Stroke="#2A5F82" StrokeThickness="1">
+                        <controls:BorderlessEntry Text="{Binding Password}" IsPassword="True" TextColor="White" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Forgot password -->
+                <Label Text="{loc:Translate Key=ForgotPassword}" FontFamily="OpenSansSemibold" FontSize="13"
+                       TextColor="#4FD7F0" HorizontalOptions="End" />
+
+                <!-- Submit button -->
+                <Button Text="{loc:Translate Key=Login}" Command="{Binding LoginCommand}"
+                        FontFamily="OpenSansSemibold" FontSize="16" TextColor="#0B1E3D"
+                        BackgroundColor="#4FD7F0" HeightRequest="54" CornerRadius="27" Margin="0,8,0,0"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                                   Color="#4FD7F0" HorizontalOptions="Center" />
+
+                <!-- Register link -->
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="4" Margin="0,8,0,0">
+                    <Label Text="{loc:Translate Key=DontHaveAccount}" TextColor="#B8CEDD" FontSize="13" />
+                    <Label Text="{loc:Translate Key=Register}" TextColor="White" FontFamily="OpenSansSemibold"
+                           FontSize="13" TextDecorations="Underline">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToRegisterCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </HorizontalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

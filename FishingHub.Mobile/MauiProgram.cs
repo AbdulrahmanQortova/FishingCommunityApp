@@ -24,13 +24,13 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
-
+        BorderlessEntryHandlerRegistration.Apply();
         // --- Core services (Singleton — shared state across the whole app) ---
         builder.Services.AddSingleton<ILocalizationService, LocalizationService>();
         builder.Services.AddSingleton<IThemeService, ThemeService>();
         builder.Services.AddSingleton<App>();
         builder.Services.AddSingleton<AppShell>();
-
+        builder.Services.AddSingleton<ISecureTokenStorage, SecureTokenStorage>();
         // --- Pages & ViewModels (Transient — a fresh instance per navigation) ---
         builder.Services.AddTransient<LandingPageViewModel>();
         builder.Services.AddTransient<LandingPage>();
@@ -42,7 +42,10 @@ public static class MauiProgram
         builder.Services.AddTransient<RoleSelectionPage>();
         builder.Services.AddTransient<RegisterViewModel>();
         builder.Services.AddTransient<RegisterPage>();
-        BorderlessEntryHandlerRegistration.Apply();
+
+        builder.Services.AddTransient<LoginViewModel>();
+        builder.Services.AddTransient<LoginPage>();
+    
 
 
         builder.Services.AddSingleton<IAuthApiService>(sp =>

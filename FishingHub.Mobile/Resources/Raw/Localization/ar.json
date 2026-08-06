@@ -76,6 +76,11 @@
   "EmailRequired": "البريد الإلكتروني مطلوب.",
   "EmailInvalid": "من فضلك أدخل بريد إلكتروني صحيح.",
   "PasswordTooShort": "كلمة المرور لازم تكون 8 حروف على الأقل.",
-  "PasswordsDoNotMatch": "كلمتا المرور غير متطابقتين."
+  "PasswordsDoNotMatch": "كلمتا المرور غير متطابقتين.",
+  "WelcomeBack": "أهلاً بعودتك",
+  "LoginSubtitle": "سجّل دخولك وكمّل رحلة الصيد بتاعتك.",
+  "RememberMe": "تذكرني",
+  "InvalidCredentials": "الإيميل أو كلمة المرور غلط.",
+  "SecureTokenError": "معرفناش نحفظ جلستك بأمان. حاول تاني."
 
 }
