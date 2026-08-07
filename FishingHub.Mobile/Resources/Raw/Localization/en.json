@@ -81,5 +81,17 @@
   "LoginSubtitle": "Sign in to continue your fishing journey.",
   "RememberMe": "Remember me",
   "InvalidCredentials": "Invalid email or password.",
-  "SecureTokenError": "Could not save your session securely. Please try again."
+  "SecureTokenError": "Could not save your session securely. Please try again.",
+  "Orders": "Orders",
+  "Inventory": "Inventory",
+  "Products": "Products",
+  "Analytics": "Analytics",
+  "Coupons": "Coupons",
+  "Customers": "Customers",
+  "HelpfulTips": "Helpful Tips",
+  "MyBoats": "My Boats",
+  "MyTrips": "My Trips",
+  "BookingRequests": "Booking Requests",
+  "FishingLog": "Fishing Log",
+  "Wishlist": "Wishlist"
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:loc="clr-namespace:FishingHub.Mobile.Localization"
+             x:Class="FishingHub.Mobile.Views.Community.CommunityPage"
+             Title="Community"
+             BackgroundColor="{DynamicResource PageBackgroundColor}">
+
+    <Grid RowDefinitions="Auto,*">
+        <Label Grid.Row="0" Text="{loc:Translate Key=Community}" FontFamily="OpenSansSemibold" FontSize="24"
+               TextColor="{DynamicResource TextPrimaryColor}" Padding="20,16" />
+
+        <Label Grid.Row="1" Text="The community feed is coming next 🐟" HorizontalOptions="Center" VerticalOptions="Center"
+               TextColor="{DynamicResource TextSecondaryColor}" />
+    </Grid>
+
+</ContentPage>

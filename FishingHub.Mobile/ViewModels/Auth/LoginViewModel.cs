@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FishingHub.Mobile.Models;
 using FishingHub.Mobile.Models.Api.Auth;
 using FishingHub.Mobile.Services.Interfaces;
 
@@ -9,14 +10,21 @@ public partial class LoginViewModel : ObservableObject
 {
     private readonly IAuthApiService _authApiService;
     private readonly ISecureTokenStorage _tokenStorage;
+    private readonly ICurrentUserService _currentUserService;
     private readonly ILocalizationService _localizationService;
 
-    public LoginViewModel(IAuthApiService authApiService, ISecureTokenStorage tokenStorage, ILocalizationService localizationService)
+    public LoginViewModel(
+        IAuthApiService authApiService,
+        ISecureTokenStorage tokenStorage,
+        ICurrentUserService currentUserService,
+        ILocalizationService localizationService)
     {
         _authApiService = authApiService;
         _tokenStorage = tokenStorage;
+        _currentUserService = currentUserService;
         _localizationService = localizationService;
     }
+
 
     [ObservableProperty]
     private string email = string.Empty;
@@ -83,14 +91,22 @@ public partial class LoginViewModel : ObservableObject
                 return;
             }
 
-            // Main app shell (Home/Trips/Community/Shop/Chat/Profile tabs) isn't built
-            // yet — routes to the same placeholder for now, carrying the logged-in
-            // user's basic info forward.
-            await Shell.Current.GoToAsync("auth-placeholder", new Dictionary<string, object>
+            _currentUserService.SetUser(new CurrentUser
             {
-                { "UserId", result.Data.UserId },
-                { "FirstName", result.Data.FirstName }
+                UserId = result.Data.UserId,
+                FirstName = result.Data.FirstName,
+                LastName = result.Data.LastName,
+                Email = result.Data.Email,
+                Roles = result.Data.Roles
             });
+
+            // Swap the entire window content to the main app shell — the auth flow
+            // (onboarding/login/register) is done, so there's no reason to keep it
+            // on the navigation stack behind the main app.
+            if (Application.Current is not null)
+            {
+                Application.Current.Windows[0].Page = IPlatformApplication.Current!.Services.GetRequiredService<MainAppShell>();
+            }
         }
         finally
         {

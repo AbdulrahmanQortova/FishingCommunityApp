@@ -73,6 +73,7 @@
 	</ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.10" />
     <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.60" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="CommunityToolkit.Maui" Version="15.0.0" />
@@ -86,6 +87,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <MauiXaml Update="MainAppShell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
     <MauiXaml Update="Views\Auth\AuthPlaceholderPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
@@ -98,6 +102,9 @@
     <MauiXaml Update="Views\Auth\RoleSelectionPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
+    <MauiXaml Update="Views\Community\CommunityPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
     <MauiXaml Update="Views\Onboarding\LandingPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
@@ -105,6 +112,9 @@
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
     <MauiXaml Update="Views\Onboarding\OnboardingCarouselPlaceholderPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </MauiXaml>
+    <MauiXaml Update="Views\Placeholder\PlaceholderPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>
   </ItemGroup>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FishingHub.Mobile.Views.Placeholder.PlaceholderPage"
+             BackgroundColor="{DynamicResource PageBackgroundColor}">
+
+    <Label Text="This screen is coming soon 🚧" HorizontalOptions="Center" VerticalOptions="Center"
+           TextColor="{DynamicResource TextPrimaryColor}" FontFamily="OpenSansSemibold" FontSize="16" />
+
+</ContentPage>

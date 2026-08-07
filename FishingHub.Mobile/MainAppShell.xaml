@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:loc="clr-namespace:FishingHub.Mobile.Localization"
+       xmlns:viewmodels="clr-namespace:FishingHub.Mobile.ViewModels.AppShell"
+       xmlns:models="clr-namespace:FishingHub.Mobile.Models"
+       xmlns:views="clr-namespace:FishingHub.Mobile.Views.Community"
+       x:Class="FishingHub.Mobile.MainAppShell"
+       x:DataType="viewmodels:AppShellViewModel"
+       Shell.FlyoutBehavior="Flyout"
+       FlyoutWidth="280">
+
+    <Shell.FlyoutHeader>
+        <Grid Padding="20,50,20,20" RowDefinitions="Auto,Auto" BackgroundColor="#0B1E3D">
+            <HorizontalStackLayout Grid.Row="0" Spacing="14">
+                <Border StrokeShape="RoundRectangle 26" BackgroundColor="#4FD7F0"
+                        WidthRequest="52" HeightRequest="52">
+                    <Label Text="{Binding UserInitial}" FontFamily="OpenSansSemibold" FontSize="22"
+                           TextColor="#0B1E3D" HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
+                <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                    <Label Text="{Binding UserFullName}" FontFamily="OpenSansSemibold" FontSize="17" TextColor="White" />
+                    <Label Text="{Binding UserRoleDisplayKey, Converter={StaticResource TranslateConverter}}"
+                           FontFamily="OpenSansRegular" FontSize="13" TextColor="#4FD7F0" />
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+        </Grid>
+    </Shell.FlyoutHeader>
+
+    <Shell.FlyoutContent>
+        <Grid BackgroundColor="#0F2B4A" RowDefinitions="*,Auto">
+
+            <CollectionView Grid.Row="0" ItemsSource="{Binding PrimaryMenuItems}" SelectionMode="None"
+                             Margin="12,16,12,0">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="2" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:FlyoutMenuItem">
+                        <Border StrokeShape="RoundRectangle 12" BackgroundColor="Transparent" Padding="14,12"
+                                Stroke="Transparent" StrokeThickness="0">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:AppShellViewModel}}, Path=NavigateCommand}"
+                                    CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <HorizontalStackLayout Spacing="14">
+                                <Label Text="{Binding IconEmoji}" FontSize="18" VerticalOptions="Center" />
+                                <Label Text="{Binding TitleKey, Converter={StaticResource TranslateConverter}}"
+                                       FontFamily="OpenSansRegular" FontSize="15" TextColor="#D8E4EC"
+                                       VerticalOptions="Center" />
+                            </HorizontalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <VerticalStackLayout Grid.Row="1" Spacing="2" Padding="12,12,12,24">
+                <BoxView HeightRequest="1" BackgroundColor="#1E3A5A" Margin="2,0,2,10" />
+
+                <Border StrokeShape="RoundRectangle 12" Padding="14,12">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NavigateCommand}"
+                            CommandParameter="{x:Static models:FlyoutMenuItem.ProfileShortcut}" />
+                    </Border.GestureRecognizers>
+                    <HorizontalStackLayout Spacing="14">
+                        <Label Text="👤" FontSize="16" VerticalOptions="Center" />
+                        <Label Text="{loc:Translate Key=Profile}" FontFamily="OpenSansRegular" FontSize="15"
+                               TextColor="#D8E4EC" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 12" Padding="14,12">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ToggleThemeCommand}" />
+                    </Border.GestureRecognizers>
+                    <HorizontalStackLayout Spacing="14">
+                        <Label Text="🌗" FontSize="16" VerticalOptions="Center" />
+                        <Label Text="{Binding ThemeToggleLabelKey, Converter={StaticResource TranslateConverter}}"
+                               FontFamily="OpenSansRegular" FontSize="15" TextColor="#D8E4EC" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 12" Padding="14,12">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ChangeLanguageCommand}" />
+                    </Border.GestureRecognizers>
+                    <HorizontalStackLayout Spacing="14">
+                        <Label Text="🌐" FontSize="16" VerticalOptions="Center" />
+                        <Label Text="{loc:Translate Key=Language}" FontFamily="OpenSansRegular" FontSize="15"
+                               TextColor="#D8E4EC" VerticalOptions="Center" />
+                        <Label Text="{Binding CurrentLanguageCode}" FontFamily="OpenSansSemibold" FontSize="13"
+                               TextColor="#4FD7F0" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 12" Padding="14,12">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding LogoutCommand}" />
+                    </Border.GestureRecognizers>
+                    <HorizontalStackLayout Spacing="14">
+                        <Label Text="🚪" FontSize="16" VerticalOptions="Center" />
+                        <Label Text="{loc:Translate Key=Logout}" FontFamily="OpenSansSemibold" FontSize="15"
+                               TextColor="#FF8080" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </Grid>
+    </Shell.FlyoutContent>
+
+    <ShellContent Route="community" ContentTemplate="{DataTemplate views:CommunityPage}" />
+
+</Shell>

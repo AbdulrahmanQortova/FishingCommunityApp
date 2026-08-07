@@ -81,6 +81,18 @@
   "LoginSubtitle": "سجّل دخولك وكمّل رحلة الصيد بتاعتك.",
   "RememberMe": "تذكرني",
   "InvalidCredentials": "الإيميل أو كلمة المرور غلط.",
-  "SecureTokenError": "معرفناش نحفظ جلستك بأمان. حاول تاني."
+  "SecureTokenError": "معرفناش نحفظ جلستك بأمان. حاول تاني.",
+  "Orders": "الطلبات",
+  "Inventory": "المخزون",
+  "Products": "المنتجات",
+  "Analytics": "التحليلات",
+  "Coupons": "كوبونات الخصم",
+  "Customers": "العملاء",
+  "HelpfulTips": "نصايح مفيدة",
+  "MyBoats": "مراكبي",
+  "MyTrips": "رحلاتي",
+  "BookingRequests": "طلبات الحجز",
+  "FishingLog": "سجل الصيد",
+  "Wishlist": "المفضلة"
 
 }

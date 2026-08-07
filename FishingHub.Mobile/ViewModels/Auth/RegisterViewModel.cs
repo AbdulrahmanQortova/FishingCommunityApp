@@ -104,7 +104,7 @@ public partial class RegisterViewModel : ObservableObject
 
             // Email verification screen comes next — not built yet, so we navigate
             // to the same placeholder for now with the new user's id/email attached.
-            await Shell.Current.GoToAsync("auth-placeholder", new Dictionary<string, object>
+            await Shell.Current.GoToAsync("login", new Dictionary<string, object>
             {
                 { "UserId", result.Data!.UserId },
                 { "Email", result.Data.Email }

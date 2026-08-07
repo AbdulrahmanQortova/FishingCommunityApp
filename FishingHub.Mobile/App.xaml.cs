@@ -6,31 +6,37 @@ public partial class App : Application
 {
     private readonly ILocalizationService _localizationService;
     private readonly IThemeService _themeService;
+    private readonly ICurrentUserService _currentUserService;
 
-    public App(ILocalizationService localizationService, IThemeService themeService)
+    public App(ILocalizationService localizationService, IThemeService themeService, ICurrentUserService currentUserService)
     {
         InitializeComponent();
 
         _localizationService = localizationService;
         _themeService = themeService;
+        _currentUserService = currentUserService;
 
         _localizationService.PropertyChanged += OnLocalizationServicePropertyChanged;
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
     {
-        // Run on a background thread-pool thread (via Task.Run) instead of blocking the
-        // UI thread directly. This avoids the classic sync-over-async deadlock: code
-        // running here has no UI SynchronizationContext to marshal back onto, so the
-        // internal awaits can complete freely, and blocking THIS thread for the result
-        // is safe since it isn't the UI thread being waited on.
+        Page rootPage = new AppShell(); // Default: start at the auth flow.
+
         Task.Run(async () =>
         {
             await _localizationService.InitializeAsync();
             await _themeService.InitializeAsync();
+
+            var hasSession = await _currentUserService.TryRestoreSessionAsync();
+
+            if (hasSession)
+            {
+                rootPage = IPlatformApplication.Current!.Services.GetRequiredService<MainAppShell>();
+            }
         }).GetAwaiter().GetResult();
 
-        var window = new Window(new AppShell());
+        var window = new Window(rootPage);
 
         if (window.Page is not null)
         {
