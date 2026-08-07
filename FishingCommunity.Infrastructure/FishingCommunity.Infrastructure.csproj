@@ -45,6 +45,7 @@
     <PackageReference Include="StackExchange.Redis" Version="3.0.17" />
     <PackageReference Include="Stripe.net" Version="52.1.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.21.0" />
+	<PackageReference Include="RabbitMQ.Client" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>

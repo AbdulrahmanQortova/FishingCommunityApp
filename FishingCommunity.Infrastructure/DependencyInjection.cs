@@ -4,6 +4,7 @@ using FishingCommunity.Domain.Entities.Identity;
 using FishingCommunity.Domain.Interfaces;
 using FishingCommunity.Infrastructure.BackgroundJobs;
 using FishingCommunity.Infrastructure.Identity;
+using FishingCommunity.Infrastructure.Messaging;
 using FishingCommunity.Infrastructure.Persistence;
 using FishingCommunity.Infrastructure.Persistence.Interceptors;
 using FishingCommunity.Infrastructure.Services;
@@ -33,8 +34,8 @@ public static class DependencyInjection
         services.Configure<EmailSettings>(configuration.GetSection(EmailSettings.SectionName));
         services.Configure<FeatureFlags>(configuration.GetSection(FeatureFlags.SectionName));
         services.Configure<WeatherSettings>(configuration.GetSection(WeatherSettings.SectionName));
+        services.Configure<RabbitMqSettings>(configuration.GetSection(RabbitMqSettings.SectionName));
 
-        services.AddHttpClient<IWeatherService, WeatherService>();
         // --- Interceptors ---
         services.AddScoped<AuditableEntitySaveChangesInterceptor>();
 
@@ -187,6 +188,9 @@ public static class DependencyInjection
         services.AddScoped<TripReminderJob>();
         services.AddScoped<CleanupExpiredTokensJob>();
         services.AddScoped<DailyReportJob>();
+
+        services.AddSingleton<IEventBusPublisher, RabbitMqEventBusPublisher>();
+        services.AddHttpClient<IWeatherService, WeatherService>();
         return services;
     }
 }
