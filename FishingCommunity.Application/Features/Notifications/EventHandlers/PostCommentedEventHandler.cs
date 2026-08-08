@@ -1,6 +1,6 @@
 ﻿using FishingCommunity.Application.Common.Interfaces;
 using FishingCommunity.Application.Common.Models;
-using FishingCommunity.Domain.Enums;
+using FishingCommunity.Application.Features.Notifications.IntegrationEvents;
 using FishingCommunity.Domain.Events.Community;
 using MediatR;
 
@@ -8,26 +8,26 @@ namespace FishingCommunity.Application.Features.Notifications.EventHandlers;
 
 public class PostCommentedEventHandler : INotificationHandler<DomainEventNotification<PostCommentedEvent>>
 {
-    private readonly INotificationService _notificationService;
+    private readonly IEventBusPublisher _eventBusPublisher;
 
-    public PostCommentedEventHandler(INotificationService notificationService)
+    public PostCommentedEventHandler(IEventBusPublisher eventBusPublisher)
     {
-        _notificationService = notificationService;
+        _eventBusPublisher = eventBusPublisher;
     }
 
     public async Task Handle(DomainEventNotification<PostCommentedEvent> notification, CancellationToken cancellationToken)
     {
         var domainEvent = notification.DomainEvent;
 
-        // Don't notify users about their own comments on their own posts.
         if (domainEvent.CommenterId == domainEvent.PostAuthorId) return;
 
-        await _notificationService.CreateNotificationAsync(
-            domainEvent.PostAuthorId,
-            NotificationType.PostCommented,
-            "New comment on your post",
-            "Someone commented on your post.",
-            domainEvent.PostId,
-            cancellationToken);
+        var message = new PostCommentedIntegrationEvent
+        {
+            PostId = domainEvent.PostId,
+            CommenterId = domainEvent.CommenterId,
+            PostAuthorId = domainEvent.PostAuthorId
+        };
+
+        await _eventBusPublisher.PublishAsync("notification.post.commented", message, cancellationToken);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using FishingCommunity.Application.Common.Interfaces;
 using FishingCommunity.Application.Common.Models;
-using FishingCommunity.Domain.Enums;
+using FishingCommunity.Application.Features.Notifications.IntegrationEvents;
 using FishingCommunity.Domain.Events.Community;
 using MediatR;
 
@@ -8,23 +8,23 @@ namespace FishingCommunity.Application.Features.Notifications.EventHandlers;
 
 public class UserFollowedEventHandler : INotificationHandler<DomainEventNotification<UserFollowedEvent>>
 {
-    private readonly INotificationService _notificationService;
+    private readonly IEventBusPublisher _eventBusPublisher;
 
-    public UserFollowedEventHandler(INotificationService notificationService)
+    public UserFollowedEventHandler(IEventBusPublisher eventBusPublisher)
     {
-        _notificationService = notificationService;
+        _eventBusPublisher = eventBusPublisher;
     }
 
     public async Task Handle(DomainEventNotification<UserFollowedEvent> notification, CancellationToken cancellationToken)
     {
         var domainEvent = notification.DomainEvent;
 
-        await _notificationService.CreateNotificationAsync(
-            domainEvent.FollowedId,
-            NotificationType.UserFollowed,
-            "New follower",
-            "You have a new follower!",
-            domainEvent.FollowerId,
-            cancellationToken);
+        var message = new UserFollowedIntegrationEvent
+        {
+            FollowerId = domainEvent.FollowerId,
+            FollowedId = domainEvent.FollowedId
+        };
+
+        await _eventBusPublisher.PublishAsync("notification.user.followed", message, cancellationToken);
     }
 }

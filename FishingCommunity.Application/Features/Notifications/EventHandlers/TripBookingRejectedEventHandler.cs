@@ -1,6 +1,6 @@
 ﻿using FishingCommunity.Application.Common.Interfaces;
 using FishingCommunity.Application.Common.Models;
-using FishingCommunity.Domain.Enums;
+using FishingCommunity.Application.Features.Notifications.IntegrationEvents;
 using FishingCommunity.Domain.Events.Trips;
 using MediatR;
 
@@ -8,23 +8,23 @@ namespace FishingCommunity.Application.Features.Notifications.EventHandlers;
 
 public class TripBookingRejectedEventHandler : INotificationHandler<DomainEventNotification<TripBookingRejectedEvent>>
 {
-    private readonly INotificationService _notificationService;
+    private readonly IEventBusPublisher _eventBusPublisher;
 
-    public TripBookingRejectedEventHandler(INotificationService notificationService)
+    public TripBookingRejectedEventHandler(IEventBusPublisher eventBusPublisher)
     {
-        _notificationService = notificationService;
+        _eventBusPublisher = eventBusPublisher;
     }
 
     public async Task Handle(DomainEventNotification<TripBookingRejectedEvent> notification, CancellationToken cancellationToken)
     {
         var domainEvent = notification.DomainEvent;
 
-        await _notificationService.CreateNotificationAsync(
-            domainEvent.UserId,
-            NotificationType.TripBookingRejected,
-            "Booking not approved",
-            "Unfortunately, your booking request was not approved this time.",
-            domainEvent.TripId,
-            cancellationToken);
+        var message = new TripBookingRejectedIntegrationEvent
+        {
+            TripId = domainEvent.TripId,
+            UserId = domainEvent.UserId
+        };
+
+        await _eventBusPublisher.PublishAsync("notification.trip.booking.rejected", message, cancellationToken);
     }
 }

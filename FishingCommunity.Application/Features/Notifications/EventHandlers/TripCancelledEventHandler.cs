@@ -1,7 +1,7 @@
 ﻿using FishingCommunity.Application.Common.Interfaces;
 using FishingCommunity.Application.Common.Models;
+using FishingCommunity.Application.Features.Notifications.IntegrationEvents;
 using FishingCommunity.Domain.Entities.Trips;
-using FishingCommunity.Domain.Enums;
 using FishingCommunity.Domain.Events.Trips;
 using FishingCommunity.Domain.Interfaces;
 using MediatR;
@@ -11,12 +11,12 @@ namespace FishingCommunity.Application.Features.Notifications.EventHandlers;
 
 public class TripCancelledEventHandler : INotificationHandler<DomainEventNotification<TripCancelledEvent>>
 {
-    private readonly INotificationService _notificationService;
+    private readonly IEventBusPublisher _eventBusPublisher;
     private readonly IUnitOfWork _unitOfWork;
 
-    public TripCancelledEventHandler(INotificationService notificationService, IUnitOfWork unitOfWork)
+    public TripCancelledEventHandler(IEventBusPublisher eventBusPublisher, IUnitOfWork unitOfWork)
     {
-        _notificationService = notificationService;
+        _eventBusPublisher = eventBusPublisher;
         _unitOfWork = unitOfWork;
     }
 
@@ -24,24 +24,23 @@ public class TripCancelledEventHandler : INotificationHandler<DomainEventNotific
     {
         var domainEvent = notification.DomainEvent;
 
-        // Notify every user who had an active booking on this trip — not just the organizer.
+        // We still need this query HERE, in the API — the Worker Service won't have
+        // its own DbContext connection to the same data in this simple setup, so it's
+        // simpler to resolve "who's affected" now and send their IDs in the message,
+        // rather than have the Consumer re-query the database itself.
         var affectedUserIds = await _unitOfWork.Repository<TripBooking>().Query()
             .Where(b => b.TripId == domainEvent.TripId)
             .Select(b => b.UserId)
             .Distinct()
             .ToListAsync(cancellationToken);
 
-        foreach (var userId in affectedUserIds)
+        var message = new TripCancelledIntegrationEvent
         {
-            await _notificationService.CreateNotificationAsync(
-                userId,
-                NotificationType.TripCancelled,
-                "Trip cancelled",
-                domainEvent.Reason is not null
-                    ? $"A trip you booked was cancelled. Reason: {domainEvent.Reason}"
-                    : "A trip you booked was cancelled.",
-                domainEvent.TripId,
-                cancellationToken);
-        }
+            TripId = domainEvent.TripId,
+            Reason = domainEvent.Reason,
+            AffectedUserIds = affectedUserIds
+        };
+
+        await _eventBusPublisher.PublishAsync("notification.trip.cancelled", message, cancellationToken);
     }
 }
