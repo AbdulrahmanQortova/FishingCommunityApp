@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FishingCommunity.Infrastruc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FishingCommunity.Shared", "FishingCommunity.Shared\FishingCommunity.Shared.csproj", "{0E9BF083-915A-914D-FD90-688537806411}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FishingCommunity.NotificationWorker", "FishingCommunity.NotificationWorker\FishingCommunity.NotificationWorker.csproj", "{2E84C844-DA99-D8A3-6C72-9449A97F760D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,6 +72,10 @@ Global
 		{0E9BF083-915A-914D-FD90-688537806411}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E9BF083-915A-914D-FD90-688537806411}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E9BF083-915A-914D-FD90-688537806411}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E84C844-DA99-D8A3-6C72-9449A97F760D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E84C844-DA99-D8A3-6C72-9449A97F760D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E84C844-DA99-D8A3-6C72-9449A97F760D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E84C844-DA99-D8A3-6C72-9449A97F760D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -84,6 +90,7 @@ Global
 		{CBB37266-E47B-B207-BDA8-38855CC4CE5A} = {4ED8EE42-872C-4E48-9997-5BE775C287E6}
 		{FDF13178-E75F-C427-340E-5BA33CACAF33} = {4ED8EE42-872C-4E48-9997-5BE775C287E6}
 		{0E9BF083-915A-914D-FD90-688537806411} = {4ED8EE42-872C-4E48-9997-5BE775C287E6}
+		{2E84C844-DA99-D8A3-6C72-9449A97F760D} = {4ED8EE42-872C-4E48-9997-5BE775C287E6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3124353E-FE59-4C38-8C60-573ACD221E2D}
