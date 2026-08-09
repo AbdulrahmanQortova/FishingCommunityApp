@@ -1,4 +1,5 @@
-﻿using FishingCommunity.Application.Common.Interfaces;
+﻿using System.Text;
+using FishingCommunity.Application.Common.Interfaces;
 using FishingCommunity.Application.Common.Models;
 using FishingCommunity.Domain.Entities.Identity;
 using FishingCommunity.Domain.Interfaces;
@@ -21,12 +22,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
 namespace FishingCommunity.Infrastructure;
 
 public static class DependencyInjection
 {
+    /// <summary>
+    /// Registers everything needed by ANY host type (Web API, Worker Service, console
+    /// apps, etc.): DbContext, repositories, Identity's core stores, JWT token
+    /// generation, email, file storage, caching, background jobs, external API
+    /// clients, and the RabbitMQ publisher. Deliberately excludes anything tied to
+    /// ASP.NET Core's HTTP pipeline (authentication scheme, authorization,
+    /// HttpContext) — see AddWebInfrastructure for that.
+    /// </summary>
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         // --- Options binding ---
@@ -35,6 +43,7 @@ public static class DependencyInjection
         services.Configure<FeatureFlags>(configuration.GetSection(FeatureFlags.SectionName));
         services.Configure<WeatherSettings>(configuration.GetSection(WeatherSettings.SectionName));
         services.Configure<RabbitMqSettings>(configuration.GetSection(RabbitMqSettings.SectionName));
+        services.Configure<FileStorageSettings>(configuration.GetSection(FileStorageSettings.SectionName));
 
         // --- Interceptors ---
         services.AddScoped<AuditableEntitySaveChangesInterceptor>();
@@ -75,9 +84,10 @@ public static class DependencyInjection
             // implements the same IDistributedCache interface, so WeatherService works
             // unchanged either way.
             services.AddDistributedMemoryCache();
-        } 
+        }
         #endregion
-        // --- ASP.NET Core Identity ---
+
+        // --- ASP.NET Core Identity (core stores only — no authentication scheme here) ---
         services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
         {
             options.Password.RequiredLength = 8;
@@ -99,9 +109,7 @@ public static class DependencyInjection
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
-
-
-
+        // --- Hangfire ---
         services.AddHangfire(config => config
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
                 .UseSimpleAssemblyNameTypeSerializer()
@@ -121,7 +129,39 @@ public static class DependencyInjection
         {
             options.WorkerCount = Environment.ProcessorCount * 2;
         });
-        // --- JWT Authentication ---
+
+        // --- Application services / infrastructure implementations ---
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IIdentityService, IdentityService>();
+        services.AddScoped<IJwtTokenService, JwtTokenService>();
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<IEmailService, EmailService>();
+        services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+        services.AddScoped<INotificationService, NotificationService>();
+        services.AddSingleton<IChatConnectionTracker, ChatConnectionTracker>();
+        services.AddScoped<IChatNotifier, ChatNotifier>();
+        services.AddScoped<IAiAssistantService, RuleBasedAiAssistantService>();
+        services.AddScoped<IFileStorageService, LocalFileStorageService>();
+
+        // Job classes themselves — registered as Scoped since they use IUnitOfWork internally.
+        services.AddScoped<TripReminderJob>();
+        services.AddScoped<CleanupExpiredTokensJob>();
+        services.AddScoped<DailyReportJob>();
+
+        services.AddSingleton<IEventBusPublisher, RabbitMqEventBusPublisher>();
+        services.AddHttpClient<IWeatherService, WeatherService>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers ASP.NET Core-specific infrastructure: JWT authentication scheme,
+    /// authorization, and HttpContext access. Only relevant to Web API hosts —
+    /// NOT background workers or console apps that otherwise share the same
+    /// Infrastructure layer via AddInfrastructure() above.
+    /// </summary>
+    public static IServiceCollection AddWebInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    {
         var jwtSettings = configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()
             ?? throw new InvalidOperationException("JwtSettings section is missing from configuration.");
 
@@ -168,29 +208,10 @@ public static class DependencyInjection
 
         services.AddAuthorization();
 
-        // --- HttpContextAccessor (needed by CurrentUserService) ---
+        // --- HttpContextAccessor (needed by CurrentUserService's ASP.NET Core-specific
+        // implementation, and anything else that reads the current HTTP request) ---
         services.AddHttpContextAccessor();
 
-        // --- Application services / infrastructure implementations ---
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<IIdentityService, IdentityService>();
-        services.AddScoped<IJwtTokenService, JwtTokenService>();
-        services.AddScoped<ICurrentUserService, CurrentUserService>();
-        services.AddScoped<IEmailService, EmailService>();
-        services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-        services.AddScoped<INotificationService, NotificationService>();
-        services.AddSingleton<IChatConnectionTracker, ChatConnectionTracker>();
-        services.AddScoped<IChatNotifier, ChatNotifier>();
-        services.AddScoped<IAiAssistantService, RuleBasedAiAssistantService>();
-        services.Configure<FileStorageSettings>(configuration.GetSection(FileStorageSettings.SectionName));
-        services.AddScoped<IFileStorageService, LocalFileStorageService>();
-        // Job classes themselves — registered as Scoped since they use IUnitOfWork internally.
-        services.AddScoped<TripReminderJob>();
-        services.AddScoped<CleanupExpiredTokensJob>();
-        services.AddScoped<DailyReportJob>();
-
-        services.AddSingleton<IEventBusPublisher, RabbitMqEventBusPublisher>();
-        services.AddHttpClient<IWeatherService, WeatherService>();
         return services;
     }
 }

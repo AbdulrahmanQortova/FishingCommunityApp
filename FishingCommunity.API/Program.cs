@@ -12,9 +12,9 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ============================================================
+
 // Serilog
-// ============================================================
+
 builder.Host.UseSerilog((context, configuration) =>
 {
     configuration
@@ -23,13 +23,14 @@ builder.Host.UseSerilog((context, configuration) =>
         .WriteTo.Console();
 });
 
-// ============================================================
+
 // Services
-// ============================================================
+
 builder.Services.AddControllers();
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddWebInfrastructure(builder.Configuration);
 
 builder.Services.AddSwaggerDocumentation();
 builder.Services.AddApiVersioningConfiguration();
@@ -51,9 +52,9 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// ============================================================
+
 // Middleware pipeline
-// ============================================================
+
 app.UseGlobalExceptionHandler();
 
 if (app.Environment.IsDevelopment())
@@ -74,9 +75,9 @@ app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ============================================================
+
 // Hangfire Dashboard (Admin-only)
-// ============================================================
+
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
     Authorization = new[] { new HangfireDashboardAuthFilter() }
@@ -85,9 +86,9 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
 app.MapControllers();
 app.MapHub<FishingCommunity.API.Hubs.ChatHub>("/hubs/chat");
 
-// ============================================================
+
 // Database Seeding (Roles + Default Admin)
-// ============================================================
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -107,9 +108,9 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// ============================================================
+
 // Hangfire Recurring Jobs Registration
-// ============================================================
+
 RecurringJob.AddOrUpdate<TripReminderJob>(
     "trip-reminders",
     job => job.ExecuteAsync(),
