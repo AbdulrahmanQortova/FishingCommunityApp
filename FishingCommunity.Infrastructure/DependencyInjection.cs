@@ -139,7 +139,6 @@ public static class DependencyInjection
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddSingleton<IChatConnectionTracker, ChatConnectionTracker>();
-        services.AddScoped<IChatNotifier, ChatNotifier>();
         services.AddScoped<IAiAssistantService, RuleBasedAiAssistantService>();
         services.AddScoped<IFileStorageService, LocalFileStorageService>();
 
@@ -187,8 +186,6 @@ public static class DependencyInjection
                     ClockSkew = TimeSpan.Zero
                 };
 
-                // Allow SignalR to receive the JWT via query string (needed because browsers
-                // can't set Authorization headers on WebSocket connections).
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = context =>
@@ -207,10 +204,13 @@ public static class DependencyInjection
             });
 
         services.AddAuthorization();
-
-        // --- HttpContextAccessor (needed by CurrentUserService's ASP.NET Core-specific
-        // implementation, and anything else that reads the current HTTP request) ---
         services.AddHttpContextAccessor();
+
+        // SignalR-dependent — requires IHubContext<Hub>, which only exists once
+        // AddSignalR() + a mapped Hub are registered on an ASP.NET Core Web Host.
+        // The Worker Service (or any other non-web host) never calls this method,
+        // so it never needs a working IChatNotifier.
+        services.AddScoped<IChatNotifier, ChatNotifier>();
 
         return services;
     }

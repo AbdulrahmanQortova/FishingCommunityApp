@@ -3,17 +3,19 @@ using FishingCommunity.Application.Common.Models;
 using FishingCommunity.Infrastructure;
 using FishingCommunity.NotificationWorker;
 
-var builder = Host.CreateApplicationBuilder(args);
+var host = Host.CreateDefaultBuilder(args)
+    .UseDefaultServiceProvider(options =>
+    {
+        options.ValidateOnBuild = false;
+        options.ValidateScopes = true;
+    })
+    .ConfigureServices((context, services) =>
+    {
+        services.Configure<RabbitMqSettings>(context.Configuration.GetSection(RabbitMqSettings.SectionName));
+        services.AddApplication();
+        services.AddInfrastructure(context.Configuration);
+        services.AddHostedService<NotificationConsumerService>();
+    })
+    .Build();
 
-builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection(RabbitMqSettings.SectionName));
-
-// Both are needed: AddApplication() registers MediatR's IPublisher (required by
-// AuditableEntitySaveChangesInterceptor), and AddInfrastructure() registers the
-// DbContext, repositories, and everything else the Worker needs.
-builder.Services.AddApplication();
-builder.Services.AddInfrastructure(builder.Configuration);
-
-builder.Services.AddHostedService<NotificationConsumerService>();
-
-var host = builder.Build();
 host.Run();
