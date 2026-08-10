@@ -93,5 +93,15 @@
   "MyTrips": "My Trips",
   "BookingRequests": "Booking Requests",
   "FishingLog": "Fishing Log",
-  "Wishlist": "Wishlist"
+  "Wishlist": "Wishlist",
+  "WhatsOnYourMind": "What's on your mind?",
+  "CreatePost": "Create Post",
+  "NoPostsYet": "No posts yet. Be the first to share!",
+  "LoadingPosts": "Loading posts...",
+  "Like": "Like",
+  "Comment": "Comment",
+  "JustNow": "Just now",
+  "MinutesAgo": "{0}m ago",
+  "HoursAgo": "{0}h ago",
+  "DaysAgo": "{0}d ago"
 }

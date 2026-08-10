@@ -93,6 +93,16 @@
   "MyTrips": "رحلاتي",
   "BookingRequests": "طلبات الحجز",
   "FishingLog": "سجل الصيد",
-  "Wishlist": "المفضلة"
+  "Wishlist": "المفضلة",
+  "WhatsOnYourMind": "في إيه في بالك؟",
+  "CreatePost": "أنشئ منشور",
+  "NoPostsYet": "لسه مفيش منشورات. كن أول واحد يشارك!",
+  "LoadingPosts": "جاري تحميل المنشورات...",
+  "Like": "إعجاب",
+  "Comment": "تعليق",
+  "JustNow": "الآن",
+  "MinutesAgo": "من {0} دقيقة",
+  "HoursAgo": "من {0} ساعة",
+  "DaysAgo": "من {0} يوم"
 
 }
