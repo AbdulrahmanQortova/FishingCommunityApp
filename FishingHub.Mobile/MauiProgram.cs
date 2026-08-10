@@ -4,6 +4,7 @@ using FishingHub.Mobile.Services.Implementations;
 using FishingHub.Mobile.Services.Interfaces;
 using FishingHub.Mobile.ViewModels.AppShell;
 using FishingHub.Mobile.ViewModels.Auth;
+using FishingHub.Mobile.ViewModels.Community;
 using FishingHub.Mobile.ViewModels.Onboarding;
 using FishingHub.Mobile.Views.Auth;
 using FishingHub.Mobile.Views.Community;
@@ -17,7 +18,7 @@ public static class MauiProgram
 {
     // Centralized here so both the HttpClient registration below and
     // TokenRefreshHandler's standalone refresh call use the exact same base URL.
-    private const string ApiBaseUrl = "http://localhost:5296/"; // Android emulator.
+    private const string ApiBaseUrl = "http://192.168.1.204:5296/"; // Android emulator.
     // Use "http://localhost:5296/" instead if targeting iOS Simulator / Windows.
 
     public static MauiApp CreateMauiApp()
@@ -88,7 +89,9 @@ public static class MauiProgram
         builder.Services.AddTransient<AppShellViewModel>();
         builder.Services.AddTransient<CommunityPage>();
         builder.Services.AddTransient<PlaceholderPage>();
+        builder.Services.AddScoped<ICommunityApiService, CommunityApiService>();
 
+        builder.Services.AddTransient<CommunityViewModel>();
 #if DEBUG
         builder.Logging.AddDebug();
 #endif

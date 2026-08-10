@@ -39,22 +39,23 @@ public class ApiClient : IApiClient
         {
             using var response = await sendRequest();
 
-            // Some successful responses (e.g. 204 No Content, or a bare 200 with an
-            // empty body) won't deserialize to ApiResult<T> — treat those as a
-            // generic success rather than a deserialization failure.
-            if (response.IsSuccessStatusCode && response.Content.Headers.ContentLength is 0 or null)
+            var rawContent = await response.Content.ReadAsStringAsync();
+
+            if (string.IsNullOrWhiteSpace(rawContent))
             {
-                return new ApiResult<TResponse> { Succeeded = true };
+                return new ApiResult<TResponse>
+                {
+                    Succeeded = response.IsSuccessStatusCode,
+                    Errors = response.IsSuccessStatusCode ? Array.Empty<string>() : new[] { $"Empty response (status {(int)response.StatusCode})." }
+                };
             }
 
-            var result = await response.Content.ReadFromJsonAsync<ApiResult<TResponse>>();
-
-            if (result is not null)
+            var result = System.Text.Json.JsonSerializer.Deserialize<ApiResult<TResponse>>(rawContent, new System.Text.Json.JsonSerializerOptions
             {
-                return result;
-            }
+                PropertyNameCaseInsensitive = true
+            });
 
-            return new ApiResult<TResponse>
+            return result ?? new ApiResult<TResponse>
             {
                 Succeeded = false,
                 Errors = new[] { $"Unexpected response (status {(int)response.StatusCode})." }

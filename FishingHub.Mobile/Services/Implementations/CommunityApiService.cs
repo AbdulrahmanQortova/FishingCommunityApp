@@ -25,8 +25,8 @@ public class CommunityApiService : ICommunityApiService
         return _apiClient.PostAsync<CreatePostRequest, object>("api/v1/posts", request, cancellationToken);
     }
 
-    public Task<ApiResult<object>> ReactToPostAsync(Guid postId, string reactionType, CancellationToken cancellationToken = default)
+    public Task<ApiResult<bool>> ReactToPostAsync(Guid postId, string reactionType, CancellationToken cancellationToken = default)
     {
-        return _apiClient.PostAsync<object, object>($"api/v1/posts/{postId}/react", new { type = reactionType }, cancellationToken);
+        return _apiClient.PostAsync<object, bool>($"api/v1/posts/{postId}/react", new { type = reactionType }, cancellationToken);
     }
 }

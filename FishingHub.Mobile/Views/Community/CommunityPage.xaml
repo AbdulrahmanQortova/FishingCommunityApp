@@ -2,16 +2,104 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:loc="clr-namespace:FishingHub.Mobile.Localization"
+             xmlns:controls="clr-namespace:FishingHub.Mobile.Controls"
+             xmlns:viewmodels="clr-namespace:FishingHub.Mobile.ViewModels.Community"
+             xmlns:models="clr-namespace:FishingHub.Mobile.Models"
              x:Class="FishingHub.Mobile.Views.Community.CommunityPage"
-             Title="Community"
+             x:DataType="viewmodels:CommunityViewModel"
+             Title="{loc:Translate Key=Community}"
              BackgroundColor="{DynamicResource PageBackgroundColor}">
 
-    <Grid RowDefinitions="Auto,*">
-        <Label Grid.Row="0" Text="{loc:Translate Key=Community}" FontFamily="OpenSansSemibold" FontSize="24"
-               TextColor="{DynamicResource TextPrimaryColor}" Padding="20,16" />
+    <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}">
+        <CollectionView ItemsSource="{Binding Posts}"
+                         RemainingItemsThreshold="2"
+                         RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}">
 
-        <Label Grid.Row="1" Text="The community feed is coming next 🐟" HorizontalOptions="Center" VerticalOptions="Center"
-               TextColor="{DynamicResource TextSecondaryColor}" />
-    </Grid>
+            <!-- Compose box + loading indicator sit at the top of the scrollable area -->
+            <CollectionView.Header>
+                <VerticalStackLayout Padding="16,16,16,8" Spacing="12">
+
+                    <Border StrokeShape="RoundRectangle 16" BackgroundColor="{DynamicResource SurfaceColor}"
+                            Stroke="{DynamicResource BorderColor}" StrokeThickness="1" Padding="14">
+                        <VerticalStackLayout Spacing="10">
+                            <controls:BorderlessEntry Text="{Binding NewPostContent}"
+                                   Placeholder="{loc:Translate Key=WhatsOnYourMind}"
+                                   PlaceholderColor="{DynamicResource TextSecondaryColor}"
+                                   TextColor="{DynamicResource TextPrimaryColor}" HeightRequest="44" />
+
+                            <Button Text="{loc:Translate Key=CreatePost}" Command="{Binding CreatePostCommand}"
+                                    HorizontalOptions="End" FontSize="13" HeightRequest="38" CornerRadius="19"
+                                    Padding="18,0" IsEnabled="{Binding IsPosting, Converter={StaticResource InvertedBoolConverter}}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
+                                       Color="{StaticResource Primary}" HeightRequest="30" />
+
+                </VerticalStackLayout>
+            </CollectionView.Header>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:PostDisplayModel">
+                    <Border StrokeShape="RoundRectangle 14" BackgroundColor="{DynamicResource SurfaceColor}"
+                            Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
+                            Margin="16,0,16,14" Padding="16,14">
+                        <VerticalStackLayout Spacing="10">
+
+                            <!-- Content -->
+                            <Label Text="{Binding Content}" TextColor="{DynamicResource TextPrimaryColor}"
+                                   FontFamily="OpenSansRegular" FontSize="15" LineBreakMode="WordWrap" />
+
+                            <!-- Photo, if present -->
+                            <Image Source="{Binding MainPhotoUrl}" Aspect="AspectFill" HeightRequest="200"
+                                   IsVisible="{Binding HasPhoto}" />
+
+                            <BoxView HeightRequest="1" BackgroundColor="{DynamicResource BorderColor}" />
+
+                            <!-- Actions row -->
+                            <Grid ColumnDefinitions="*,*">
+                                <HorizontalStackLayout Grid.Column="0" Spacing="6" HorizontalOptions="Center">
+                                    <HorizontalStackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CommunityViewModel}}, Path=ToggleLikeCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </HorizontalStackLayout.GestureRecognizers>
+
+                                    <Label Text="👍" FontSize="16" Opacity="{Binding IsLikedByCurrentUser, Converter={StaticResource BoolToOpacityConverter}}" />
+                                    <Label Text="{loc:Translate Key=Like}" FontFamily="OpenSansSemibold" FontSize="13"
+                                           TextColor="{DynamicResource TextSecondaryColor}" />
+                                    <Label Text="{Binding LikesCount}" FontFamily="OpenSansSemibold" FontSize="13"
+                                           TextColor="{DynamicResource TextSecondaryColor}" />
+                                </HorizontalStackLayout>
+
+                                <HorizontalStackLayout Grid.Column="1" Spacing="6" HorizontalOptions="Center">
+                                    <Label Text="💬" FontSize="16" />
+                                    <Label Text="{loc:Translate Key=Comment}" FontFamily="OpenSansSemibold" FontSize="13"
+                                           TextColor="{DynamicResource TextSecondaryColor}" />
+                                    <Label Text="{Binding CommentsCount}" FontFamily="OpenSansSemibold" FontSize="13"
+                                           TextColor="{DynamicResource TextSecondaryColor}" />
+                                </HorizontalStackLayout>
+                            </Grid>
+
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="40" Spacing="12">
+                    <Label Text="🐟" FontSize="48" HorizontalOptions="Center" />
+                    <Label Text="{loc:Translate Key=NoPostsYet}" TextColor="{DynamicResource TextSecondaryColor}"
+                           HorizontalTextAlignment="Center" FontSize="14" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+
+            <CollectionView.Footer>
+                <ActivityIndicator IsRunning="{Binding IsLoadingMore}" IsVisible="{Binding IsLoadingMore}"
+                                   Color="{StaticResource Primary}" HeightRequest="40" Margin="0,0,0,20" />
+            </CollectionView.Footer>
+
+        </CollectionView>
+    </RefreshView>
 
 </ContentPage>
