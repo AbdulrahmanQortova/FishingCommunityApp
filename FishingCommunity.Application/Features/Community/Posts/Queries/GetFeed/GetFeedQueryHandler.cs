@@ -1,4 +1,5 @@
 ﻿using FishingCommunity.Application.Common.Extensions;
+using FishingCommunity.Application.Common.Interfaces;
 using FishingCommunity.Domain.Entities.Community;
 using FishingCommunity.Domain.Interfaces;
 using FishingCommunity.Shared.Wrappers;
@@ -9,10 +10,12 @@ namespace FishingCommunity.Application.Features.Community.Posts.Queries.GetFeed;
 public class GetFeedQueryHandler : IRequestHandler<GetFeedQuery, Result<PaginatedList<PostSummaryDto>>>
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IIdentityService _identityService;
 
-    public GetFeedQueryHandler(IUnitOfWork unitOfWork)
+    public GetFeedQueryHandler(IUnitOfWork unitOfWork, IIdentityService identityService)
     {
         _unitOfWork = unitOfWork;
+        _identityService = identityService;
     }
 
     public async Task<Result<PaginatedList<PostSummaryDto>>> Handle(GetFeedQuery request, CancellationToken cancellationToken)
@@ -24,8 +27,6 @@ public class GetFeedQueryHandler : IRequestHandler<GetFeedQuery, Result<Paginate
                 Id = p.Id,
                 AuthorId = p.AuthorId,
                 Content = p.Content,
-                // PhotoUrls comes from a backing field, but the reverse conversion is
-                // set up in the EF configuration, so this projects correctly to SQL.
                 PhotoUrls = p.PhotoUrls.ToList(),
                 IsEdited = p.IsEdited,
                 CreatedDate = p.CreatedDate,
@@ -40,6 +41,22 @@ public class GetFeedQueryHandler : IRequestHandler<GetFeedQuery, Result<Paginate
             });
 
         var paginatedResult = await query.ToPaginatedListAsync(request.PageNumber, request.PageSize, cancellationToken);
+
+        // Batch-resolve author names for all posts on this page in one pass, rather
+        // than querying Identity once per post (N+1 query problem).
+        var authorIds = paginatedResult.Items.Select(p => p.AuthorId).Distinct().ToList();
+
+        foreach (var authorId in authorIds)
+        {
+            var profile = await _identityService.GetUserProfileAsync(authorId, cancellationToken);
+
+            if (profile is null) continue;
+
+            foreach (var post in paginatedResult.Items.Where(p => p.AuthorId == authorId))
+            {
+                post.AuthorName = $"{profile.FirstName} {profile.LastName}".Trim();
+            }
+        }
 
         return Result<PaginatedList<PostSummaryDto>>.Success(paginatedResult);
     }
