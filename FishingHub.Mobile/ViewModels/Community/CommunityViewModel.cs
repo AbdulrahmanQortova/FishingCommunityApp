@@ -1,8 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FishingHub.Mobile.Models;
 using FishingHub.Mobile.Services.Interfaces;
-using System.Collections.ObjectModel;
 
 namespace FishingHub.Mobile.ViewModels.Community;
 
@@ -19,9 +19,15 @@ public partial class CommunityViewModel : ObservableObject
     {
         _communityApiService = communityApiService;
         _currentUserService = currentUserService;
+
+        BuildMockStories();
     }
 
     public ObservableCollection<PostDisplayModel> Posts { get; } = new();
+
+    // Stories are UI-only mock data for now — the backend has no Stories module.
+    // Replace this with a real API-backed collection if/when that feature is built.
+    public ObservableCollection<StoryItem> Stories { get; } = new();
 
     [ObservableProperty]
     private bool isBusy;
@@ -38,6 +44,8 @@ public partial class CommunityViewModel : ObservableObject
     [ObservableProperty]
     private bool isPosting;
 
+    public string CurrentUserInitial => _currentUserService.User?.InitialLetter ?? "?";
+
     [RelayCommand]
     private async Task LoadFeedAsync()
     {
@@ -50,6 +58,7 @@ public partial class CommunityViewModel : ObservableObject
         try
         {
             var result = await _communityApiService.GetFeedAsync(_currentPage, PageSize);
+            System.Diagnostics.Debug.WriteLine($"Succeeded: {result.Succeeded}, Errors: {string.Join(",", result.Errors)}, ItemsCount: {result.Data?.Items.Count}");
 
             Posts.Clear();
 
@@ -109,8 +118,6 @@ public partial class CommunityViewModel : ObservableObject
     [RelayCommand]
     private async Task ToggleLikeAsync(PostDisplayModel post)
     {
-        // Optimistic update — reflect the change immediately in the UI, then confirm
-        // with the server in the background. If the request fails, we roll it back.
         var wasLiked = post.IsLikedByCurrentUser;
         var previousCount = post.LikesCount;
 
@@ -121,7 +128,6 @@ public partial class CommunityViewModel : ObservableObject
 
         if (!result.Succeeded)
         {
-            // Roll back on failure.
             post.CurrentUserReaction = wasLiked ? "Like" : null;
             post.LikesCount = previousCount;
         }
@@ -142,7 +148,7 @@ public partial class CommunityViewModel : ObservableObject
             if (result.Succeeded)
             {
                 NewPostContent = string.Empty;
-                await LoadFeedAsync(); // Refresh to show the new post at the top.
+                await LoadFeedAsync();
             }
         }
         finally
@@ -157,6 +163,8 @@ public partial class CommunityViewModel : ObservableObject
         {
             Id = post.Id,
             AuthorId = post.AuthorId,
+            AuthorName = string.IsNullOrWhiteSpace(post.AuthorName) ? "Angler" : post.AuthorName,
+            AuthorInitial = string.IsNullOrWhiteSpace(post.AuthorName) ? "?" : post.AuthorName[..1].ToUpperInvariant(),
             Content = post.Content,
             PhotoUrls = post.PhotoUrls,
             CreatedDate = post.CreatedDate,
@@ -164,5 +172,14 @@ public partial class CommunityViewModel : ObservableObject
             LikesCount = post.LikesCount,
             CurrentUserReaction = post.CurrentUserReaction
         };
+    }
+
+    private void BuildMockStories()
+    {
+        Stories.Add(new StoryItem { IsAddStoryPlaceholder = true, UserName = "YourStory" });
+        Stories.Add(new StoryItem { UserInitial = "A", UserName = "Ahmed", BackgroundColorHex = "#2A8FC7" });
+        Stories.Add(new StoryItem { UserInitial = "K", UserName = "Captain K", BackgroundColorHex = "#2CA58D" });
+        Stories.Add(new StoryItem { UserInitial = "S", UserName = "Sara", BackgroundColorHex = "#C2478A" });
+        Stories.Add(new StoryItem { UserInitial = "G", UserName = "Gulf Tk", BackgroundColorHex = "#D4A94A" });
     }
 }

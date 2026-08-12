@@ -103,5 +103,18 @@
   "JustNow": "Just now",
   "MinutesAgo": "{0}m ago",
   "HoursAgo": "{0}h ago",
-  "DaysAgo": "{0}d ago"
+  "DaysAgo": "{0}d ago",
+  "YourStory": "Your Story",
+  "SharePlaceholder": "Share your catch...",
+  "PhotoAction": "Photo",
+  "VideoAction": "Video",
+  "LocationAction": "Location",
+  "PollAction": "Poll",
+  "ShareAction": "Share",
+  "CommentsTitle": "Comments",
+  "CommentsOnPost": "on {0}'s post",
+  "Hide": "Hide",
+  "Reply": "Reply",
+  "WriteAComment": "Write a comment...",
+  "NoCommentsYet": "No comments yet. Start the conversation!"
 }

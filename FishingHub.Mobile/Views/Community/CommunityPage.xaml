@@ -7,99 +7,202 @@
              xmlns:models="clr-namespace:FishingHub.Mobile.Models"
              x:Class="FishingHub.Mobile.Views.Community.CommunityPage"
              x:DataType="viewmodels:CommunityViewModel"
-             Title="{loc:Translate Key=Community}"
-             BackgroundColor="{DynamicResource PageBackgroundColor}">
+             Shell.NavBarIsVisible="False">
 
-    <RefreshView IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}">
-        <CollectionView ItemsSource="{Binding Posts}"
-                         RemainingItemsThreshold="2"
-                         RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}">
+    <Grid RowDefinitions="Auto,*">
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#0B1E3D" Offset="0.0" />
+                <GradientStop Color="#0F5C8C" Offset="0.55" />
+                <GradientStop Color="#1AA3D6" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
 
-            <!-- Compose box + loading indicator sit at the top of the scrollable area -->
-            <CollectionView.Header>
-                <VerticalStackLayout Padding="16,16,16,8" Spacing="12">
+        <!-- Top bar -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto,Auto" Padding="16,5,16,12" ColumnSpacing="14">
 
-                    <Border StrokeShape="RoundRectangle 16" BackgroundColor="{DynamicResource SurfaceColor}"
-                            Stroke="{DynamicResource BorderColor}" StrokeThickness="1" Padding="14">
-                        <VerticalStackLayout Spacing="10">
-                            <controls:BorderlessEntry Text="{Binding NewPostContent}"
-                                   Placeholder="{loc:Translate Key=WhatsOnYourMind}"
-                                   PlaceholderColor="{DynamicResource TextSecondaryColor}"
-                                   TextColor="{DynamicResource TextPrimaryColor}" HeightRequest="44" />
+            <ImageButton Grid.Column="0" Source="icon_menu.png" WidthRequest="24" HeightRequest="24"
+                         BackgroundColor="Transparent" Clicked="OnMenuClicked" />
 
-                            <Button Text="{loc:Translate Key=CreatePost}" Command="{Binding CreatePostCommand}"
-                                    HorizontalOptions="End" FontSize="13" HeightRequest="38" CornerRadius="19"
-                                    Padding="18,0" IsEnabled="{Binding IsPosting, Converter={StaticResource InvertedBoolConverter}}" />
-                        </VerticalStackLayout>
-                    </Border>
+            <Label Grid.Column="1" Text="{loc:Translate Key=Community}" FontFamily="OpenSansSemibold" FontSize="19"
+                   TextColor="White" HorizontalOptions="Center" />
 
-                    <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"
-                                       Color="{StaticResource Primary}" HeightRequest="30" />
+            <Grid Grid.Column="2">
+                <ImageButton Source="icon_notifications.png" WidthRequest="24" HeightRequest="24" BackgroundColor="Transparent" />
+                <Border StrokeShape="RoundRectangle 8" BackgroundColor="#E5484D" WidthRequest="15" HeightRequest="15"
+                        HorizontalOptions="End" VerticalOptions="Start" Margin="0,-4,-4,0">
+                    <Label Text="3" FontSize="9" TextColor="White" HorizontalOptions="Center" VerticalOptions="Center" />
+                </Border>
+            </Grid>
 
-                </VerticalStackLayout>
-            </CollectionView.Header>
+            <ImageButton Grid.Column="3" Source="icon_cart.png" WidthRequest="24" HeightRequest="24"
+                         BackgroundColor="Transparent" />
+        </Grid>
 
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:PostDisplayModel">
-                    <Border StrokeShape="RoundRectangle 14" BackgroundColor="{DynamicResource SurfaceColor}"
-                            Stroke="{DynamicResource BorderColor}" StrokeThickness="1"
-                            Margin="16,0,16,14" Padding="16,14">
-                        <VerticalStackLayout Spacing="10">
+        <RefreshView Grid.Row="1" IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}">
+            <CollectionView ItemsSource="{Binding Posts}"
+                             RemainingItemsThreshold="2"
+                             RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}">
 
-                            <!-- Content -->
-                            <Label Text="{Binding Content}" TextColor="{DynamicResource TextPrimaryColor}"
-                                   FontFamily="OpenSansRegular" FontSize="15" LineBreakMode="WordWrap" />
+                <CollectionView.Header>
+                    <VerticalStackLayout Spacing="16" Padding="0,0,0,8">
 
-                            <!-- Photo, if present -->
-                            <Image Source="{Binding MainPhotoUrl}" Aspect="AspectFill" HeightRequest="200"
-                                   IsVisible="{Binding HasPhoto}" />
+                        <CollectionView ItemsSource="{Binding Stories}" HeightRequest="90" Margin="16,0,0,0">
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="16" />
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="models:StoryItem">
+                                    <VerticalStackLayout Spacing="6" WidthRequest="60">
+                                        <Border StrokeShape="RoundRectangle 26" BackgroundColor="{Binding BackgroundColorHex}"
+                                                WidthRequest="52" HeightRequest="52" HorizontalOptions="Center">
+                                            <Grid>
+                                                <Label Text="{Binding UserInitial}" FontFamily="OpenSansSemibold" FontSize="18"
+                                                       TextColor="White" HorizontalOptions="Center" VerticalOptions="Center"
+                                                       IsVisible="{Binding IsAddStoryPlaceholder, Converter={StaticResource InvertedBoolConverter}}" />
+                                                <Image Source="icon_add.png" WidthRequest="20" HeightRequest="20"
+                                                       HorizontalOptions="Center" VerticalOptions="Center"
+                                                       IsVisible="{Binding IsAddStoryPlaceholder}" />
+                                            </Grid>
+                                        </Border>
+                                        <Label Text="{Binding UserName}" FontSize="11" TextColor="#B8CEDD"
+                                               HorizontalTextAlignment="Center" LineBreakMode="TailTruncation" />
+                                    </VerticalStackLayout>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
 
-                            <BoxView HeightRequest="1" BackgroundColor="{DynamicResource BorderColor}" />
+                        <Border StrokeShape="RoundRectangle 16" BackgroundColor="#14FFFFFF" Stroke="#2A5F82" StrokeThickness="1"
+                                Margin="16,0,16,0" Padding="14">
+                            <VerticalStackLayout Spacing="12">
+                                <Grid ColumnDefinitions="Auto , *" ColumnSpacing="10">
+                                    <Border Grid.Column="0" StrokeShape="RoundRectangle 18" BackgroundColor="#4FD7F0"
+                                            WidthRequest="36" HeightRequest="36">
+                                        <Label Text="{Binding CurrentUserInitial}" FontFamily="OpenSansSemibold" FontSize="15"
+                                               TextColor="#0B1E3D" HorizontalOptions="Center" VerticalOptions="Center" />
+                                    </Border>
 
-                            <!-- Actions row -->
-                            <Grid ColumnDefinitions="*,*">
-                                <HorizontalStackLayout Grid.Column="0" Spacing="6" HorizontalOptions="Center">
-                                    <HorizontalStackLayout.GestureRecognizers>
-                                        <TapGestureRecognizer
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CommunityViewModel}}, Path=ToggleLikeCommand}"
-                                            CommandParameter="{Binding .}" />
-                                    </HorizontalStackLayout.GestureRecognizers>
+                                    <Border Grid.Column="1" StrokeShape="RoundRectangle 18" BackgroundColor="#0F2B4A" Stroke="#2A5F82" StrokeThickness="1"
+                                            HeightRequest="40" HorizontalOptions="FillAndExpand">
+                                        <controls:BorderlessEntry Text="{Binding NewPostContent}"
+                                               Placeholder="{loc:Translate Key=SharePlaceholder}" 
+                                               PlaceholderColor="#6E8FA8" TextColor="White" Margin="14,0"  />
+                                    </Border>
+                                </Grid>
 
-                                    <Label Text="👍" FontSize="16" Opacity="{Binding IsLikedByCurrentUser, Converter={StaticResource BoolToOpacityConverter}}" />
-                                    <Label Text="{loc:Translate Key=Like}" FontFamily="OpenSansSemibold" FontSize="13"
-                                           TextColor="{DynamicResource TextSecondaryColor}" />
-                                    <Label Text="{Binding LikesCount}" FontFamily="OpenSansSemibold" FontSize="13"
-                                           TextColor="{DynamicResource TextSecondaryColor}" />
-                                </HorizontalStackLayout>
+                                <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8">
+                                    <Border Grid.Column="0" StrokeShape="RoundRectangle 10" BackgroundColor="#0F2B4A" Padding="0,8">
+                                        <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
+                                            <Image Source="icon_photo.png" WidthRequest="16" HeightRequest="16" />
+                                            <Label Text="{loc:Translate Key=PhotoAction}" FontSize="12" TextColor="#B8CEDD" />
+                                        </HorizontalStackLayout>
+                                    </Border>
+                                    <Border Grid.Column="1" StrokeShape="RoundRectangle 10" BackgroundColor="#0F2B4A" Padding="0,8">
+                                        <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
+                                            <Image Source="icon_video.png" WidthRequest="16" HeightRequest="16" />
+                                            <Label Text="{loc:Translate Key=VideoAction}" FontSize="12" TextColor="#B8CEDD" />
+                                        </HorizontalStackLayout>
+                                    </Border>
+                                    <Border Grid.Column="2" StrokeShape="RoundRectangle 10" BackgroundColor="#0F2B4A" Padding="0,8">
+                                        <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
+                                            <Image Source="icon_location.png" WidthRequest="16" HeightRequest="16" />
+                                            <Label Text="{loc:Translate Key=LocationAction}" FontSize="12" TextColor="#B8CEDD" />
+                                        </HorizontalStackLayout>
+                                    </Border>
+                                    <Border Grid.Column="3" StrokeShape="RoundRectangle 10" BackgroundColor="#0F2B4A" Padding="0,8">
+                                        <HorizontalStackLayout HorizontalOptions="Center" Spacing="6">
+                                            <Image Source="icon_poll.png" WidthRequest="16" HeightRequest="16" />
+                                            <Label Text="{loc:Translate Key=PollAction}" FontSize="12" TextColor="#B8CEDD" />
+                                        </HorizontalStackLayout>
+                                    </Border>
+                                </Grid>
 
-                                <HorizontalStackLayout Grid.Column="1" Spacing="6" HorizontalOptions="Center">
-                                    <Label Text="💬" FontSize="16" />
-                                    <Label Text="{loc:Translate Key=Comment}" FontFamily="OpenSansSemibold" FontSize="13"
-                                           TextColor="{DynamicResource TextSecondaryColor}" />
-                                    <Label Text="{Binding CommentsCount}" FontFamily="OpenSansSemibold" FontSize="13"
-                                           TextColor="{DynamicResource TextSecondaryColor}" />
-                                </HorizontalStackLayout>
-                            </Grid>
+                                <Button Text="{loc:Translate Key=CreatePost}" Command="{Binding CreatePostCommand}"
+                                        BackgroundColor="#4FD7F0" TextColor="#0B1E3D"
+                                        HorizontalOptions="Fill" FontSize="14" HeightRequest="40" CornerRadius="20"
+                                        IsEnabled="{Binding IsPosting, Converter={StaticResource InvertedBoolConverter}}" />
+                            </VerticalStackLayout>
+                        </Border>
 
-                        </VerticalStackLayout>
-                    </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
+                        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#4FD7F0" HeightRequest="30" />
+                    </VerticalStackLayout>
+                </CollectionView.Header>
 
-            <CollectionView.EmptyView>
-                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="40" Spacing="12">
-                    <Label Text="🐟" FontSize="48" HorizontalOptions="Center" />
-                    <Label Text="{loc:Translate Key=NoPostsYet}" TextColor="{DynamicResource TextSecondaryColor}"
-                           HorizontalTextAlignment="Center" FontSize="14" />
-                </VerticalStackLayout>
-            </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:PostDisplayModel">
+                        <Border StrokeShape="RoundRectangle 14" BackgroundColor="#14FFFFFF" Stroke="#2A5F82" StrokeThickness="1"
+                                Margin="16,0,16,14" Padding="16,14">
+                            <VerticalStackLayout Spacing="12">
 
-            <CollectionView.Footer>
-                <ActivityIndicator IsRunning="{Binding IsLoadingMore}" IsVisible="{Binding IsLoadingMore}"
-                                   Color="{StaticResource Primary}" HeightRequest="40" Margin="0,0,0,20" />
-            </CollectionView.Footer>
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    <Border Grid.Column="0" StrokeShape="RoundRectangle 20" BackgroundColor="#2A8FC7"
+                                            WidthRequest="40" HeightRequest="40">
+                                        <Label Text="{Binding AuthorInitial}" FontFamily="OpenSansSemibold" FontSize="16"
+                                               TextColor="White" HorizontalOptions="Center" VerticalOptions="Center" />
+                                    </Border>
 
-        </CollectionView>
-    </RefreshView>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="2" Margin="10,0,0,0" VerticalOptions="Center">
+                                        <HorizontalStackLayout Spacing="4">
+                                            <Label Text="{Binding AuthorName}" FontFamily="OpenSansSemibold" FontSize="14" TextColor="White" />
+                                            <Image Source="icon_verified.png" WidthRequest="14" HeightRequest="14" VerticalOptions="Center" />
+                                        </HorizontalStackLayout>
+                                        <Label Text="{Binding CreatedDate, Converter={StaticResource TimeAgoConverter}}"
+                                               FontSize="12" TextColor="#8FAFC9" />
+                                    </VerticalStackLayout>
+
+                                    <ImageButton Grid.Column="2" Source="icon_more.png" WidthRequest="20" HeightRequest="20"
+                                                 BackgroundColor="Transparent" VerticalOptions="Start" />
+                                </Grid>
+
+                                <Label Text="{Binding Content}" TextColor="#E0EAF0" FontFamily="OpenSansRegular" FontSize="14" LineBreakMode="WordWrap" />
+
+                                <Border StrokeShape="RoundRectangle 12" IsVisible="{Binding HasPhoto}" HeightRequest="220">
+                                    <Image Source="{Binding MainPhotoUrl}" Aspect="AspectFill" />
+                                </Border>
+
+                                <BoxView HeightRequest="1" BackgroundColor="#2A5F82" />
+
+                                <Grid ColumnDefinitions="*,*,*">
+                                    <HorizontalStackLayout Grid.Column="0" Spacing="6" HorizontalOptions="Center">
+                                        <HorizontalStackLayout.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:CommunityViewModel}}, Path=ToggleLikeCommand}"
+                                                CommandParameter="{Binding .}" />
+                                        </HorizontalStackLayout.GestureRecognizers>
+                                        <Image Source="{Binding LikeIconSource}" WidthRequest="18" HeightRequest="18" />
+                                        <Label Text="{Binding LikesCount}" FontFamily="OpenSansSemibold" FontSize="13" TextColor="#B8CEDD" />
+                                    </HorizontalStackLayout>
+
+                                    <HorizontalStackLayout Grid.Column="1" Spacing="6" HorizontalOptions="Center">
+                                        <Image Source="icon_comment.png" WidthRequest="18" HeightRequest="18" />
+                                        <Label Text="{Binding CommentsCount}" FontFamily="OpenSansSemibold" FontSize="13" TextColor="#B8CEDD" />
+                                    </HorizontalStackLayout>
+
+                                    <HorizontalStackLayout Grid.Column="2" Spacing="6" HorizontalOptions="Center">
+                                        <Image Source="icon_share.png" WidthRequest="18" HeightRequest="18" />
+                                        <Label Text="{loc:Translate Key=ShareAction}" FontFamily="OpenSansSemibold" FontSize="13" TextColor="#B8CEDD" />
+                                    </HorizontalStackLayout>
+                                </Grid>
+
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Padding="40" Spacing="12">
+                        <Label Text="🐟" FontSize="48" HorizontalOptions="Center" />
+                        <Label Text="{loc:Translate Key=NoPostsYet}" TextColor="#B8CEDD" HorizontalTextAlignment="Center" FontSize="14" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.Footer>
+                    <ActivityIndicator IsRunning="{Binding IsLoadingMore}" IsVisible="{Binding IsLoadingMore}"
+                                       Color="#4FD7F0" HeightRequest="40" Margin="0,0,0,20" />
+                </CollectionView.Footer>
+
+            </CollectionView>
+        </RefreshView>
+    </Grid>
 
 </ContentPage>

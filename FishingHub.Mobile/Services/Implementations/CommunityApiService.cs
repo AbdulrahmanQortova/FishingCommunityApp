@@ -29,4 +29,17 @@ public class CommunityApiService : ICommunityApiService
     {
         return _apiClient.PostAsync<object, bool>($"api/v1/posts/{postId}/react", new { type = reactionType }, cancellationToken);
     }
+
+    public Task<ApiResult<PostDetailsDto>> GetPostDetailsAsync(Guid postId, CancellationToken cancellationToken = default)
+    {
+        return _apiClient.GetAsync<PostDetailsDto>($"api/v1/posts/{postId}", cancellationToken);
+    }
+
+    public Task<ApiResult<object>> AddCommentAsync(Guid postId, string content, Guid? parentCommentId, CancellationToken cancellationToken = default)
+    {
+        return _apiClient.PostAsync<object, object>(
+            $"api/v1/posts/{postId}/comments",
+            new { content, parentCommentId },
+            cancellationToken);
+    }
 }

@@ -16,6 +16,7 @@
             <converters:NextButtonTextConverter x:Key="NextButtonTextConverter" />
             <converters:StringNotEmptyConverter x:Key="StringNotEmptyConverter" />
             <converters:BoolToOpacityConverter x:Key="BoolToOpacityConverter" />
+            <converters:TimeAgoConverter x:Key="TimeAgoConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

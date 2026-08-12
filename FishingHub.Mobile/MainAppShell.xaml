@@ -55,10 +55,10 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <VerticalStackLayout Grid.Row="1" Spacing="2" Padding="12,12,12,24">
+            <VerticalStackLayout Grid.Row="1" Spacing="10" Padding="12,12,12,24">
                 <BoxView HeightRequest="1" BackgroundColor="#1E3A5A" Margin="2,0,2,10" />
 
-                <Border StrokeShape="RoundRectangle 12" Padding="14,12">
+                <Border StrokeShape="RoundRectangle 12" Padding="14,12" StrokeThickness="0.1">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NavigateCommand}"
                             CommandParameter="{x:Static models:FlyoutMenuItem.ProfileShortcut}" />
@@ -70,7 +70,7 @@
                     </HorizontalStackLayout>
                 </Border>
 
-                <Border StrokeShape="RoundRectangle 12" Padding="14,12">
+                <Border StrokeShape="RoundRectangle 12" Padding="14,12" StrokeThickness="0.1">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding ToggleThemeCommand}" />
                     </Border.GestureRecognizers>
@@ -81,7 +81,7 @@
                     </HorizontalStackLayout>
                 </Border>
 
-                <Border StrokeShape="RoundRectangle 12" Padding="14,12">
+                <Border StrokeShape="RoundRectangle 12" Padding="14,12" StrokeThickness="0.1">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding ChangeLanguageCommand}" />
                     </Border.GestureRecognizers>
@@ -94,7 +94,7 @@
                     </HorizontalStackLayout>
                 </Border>
 
-                <Border StrokeShape="RoundRectangle 12" Padding="14,12">
+                <Border StrokeShape="RoundRectangle 12" Padding="14,12" StrokeThickness="0.1">
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding LogoutCommand}" />
                     </Border.GestureRecognizers>

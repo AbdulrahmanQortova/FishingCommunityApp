@@ -103,6 +103,19 @@
   "JustNow": "الآن",
   "MinutesAgo": "من {0} دقيقة",
   "HoursAgo": "من {0} ساعة",
-  "DaysAgo": "من {0} يوم"
+  "DaysAgo": "من {0} يوم",
+  "YourStory": "قصتك",
+  "SharePlaceholder": "شارك صيدتك...",
+  "PhotoAction": "صورة",
+  "VideoAction": "فيديو",
+  "LocationAction": "الموقع",
+  "PollAction": "استطلاع",
+  "ShareAction": "مشاركة",
+  "CommentsTitle": "التعليقات",
+  "CommentsOnPost": "على منشور {0}",
+  "Hide": "إخفاء",
+  "Reply": "رد",
+  "WriteAComment": "اكتب تعليق...",
+  "NoCommentsYet": "لسه مفيش تعليقات. ابدأ المحادثة!"
 
 }
